@@ -1,10 +1,10 @@
-# [Name of the Project] : [Team Number]
+# Fortis : Team 15
 # Members
-Project Manager: [Name] ([GitHub Name])\
-Communications Lead: [Name] ([GitHub Name])\
-Git Master: [Name] ([GitHub Name])\
-Design Lead: [Name] ([GitHub Name])\
-Quality Assurance Tester: [Name] ([GitHub Name])
+Project Manager: Cameron Sevin (csevin3)\
+Communications Lead: Mark Plaisance (MarkPlaisance)\
+Git Master: Brandon Tran (brandont120)\
+Design Lead: Lorenzo Jackson (keezyttg)\
+Quality Assurance Tester: Candor Alemu ([GitHub Name])
 
 # About Our Software
 
