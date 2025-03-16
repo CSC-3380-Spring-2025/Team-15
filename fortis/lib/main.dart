@@ -2,7 +2,9 @@ import 'package:flutter/material.dart';
 import 'pages/home.dart';
 import 'pages/relax.dart';
 import 'pages/profile.dart';
+import 'pages/shop.dart';
 import 'pages/user_login.dart';
+
 
 void main() {
   runApp(const MyApp());
@@ -33,6 +35,7 @@ class _MainScreenState extends State<MainScreen> {
     const HomePage(),
     const RelaxPage(),
     const ProfilePage(),
+    const ShopPage(),
   ];
 
   @override
@@ -40,6 +43,7 @@ class _MainScreenState extends State<MainScreen> {
     return Scaffold(
       body: _pages[_currentIndex], // Display the selected page
       bottomNavigationBar: BottomNavigationBar(
+        type: BottomNavigationBarType.fixed,
         currentIndex: _currentIndex,
         onTap: (index) {
           setState(() {
@@ -49,7 +53,8 @@ class _MainScreenState extends State<MainScreen> {
         items: const [
           BottomNavigationBarItem(icon: Icon(Icons.home), label: 'Home'),
           BottomNavigationBarItem(icon: Icon(Icons.tag_faces), label: 'Relax'),
-          BottomNavigationBarItem(icon: Icon(Icons.person), label: 'Profile')
+          BottomNavigationBarItem(icon: Icon(Icons.person), label: 'Profile'),
+          BottomNavigationBarItem(icon: Icon(Icons.money), label: 'Shop'),
         ],
       ),
     );
