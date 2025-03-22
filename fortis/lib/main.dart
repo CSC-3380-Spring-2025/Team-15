@@ -1,12 +1,20 @@
+import 'firebase_options.dart';
+
+import 'package:firebase_core/firebase_core.dart';
 import 'package:flutter/material.dart';
+
 import 'pages/home.dart';
-import 'pages/relax.dart';
 import 'pages/profile.dart';
+import 'pages/relax.dart';
 import 'pages/shop.dart';
 import 'pages/user_login.dart';
 
 
-void main() {
+void main() async{
+  WidgetsFlutterBinding.ensureInitialized();
+  await Firebase.initializeApp(
+    options: DefaultFirebaseOptions.currentPlatform,
+  );
   runApp(const MyApp());
 }
 
