@@ -19,6 +19,7 @@ class MyApp extends StatelessWidget {
   }
 }
 
+//flutter
 class MainScreen extends StatefulWidget {
   const MainScreen({super.key});
 
@@ -48,7 +49,8 @@ class _MainScreenState extends State<MainScreen> {
         items: const [
           BottomNavigationBarItem(icon: Icon(Icons.home), label: 'Home'),
           BottomNavigationBarItem(icon: Icon(Icons.tag_faces), label: 'Relax'),
-          BottomNavigationBarItem(icon: Icon(Icons.person), label: 'Profile')
+          BottomNavigationBarItem(icon: Icon(Icons.person), label: 'Profile'),
+          BottomNavigationBarItem(icon: Icon(Icons.person), label: 'Shop'),
         ],
       ),
     );

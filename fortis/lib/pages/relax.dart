@@ -6,12 +6,12 @@ class RelaxPage extends StatelessWidget {
   @override
   Widget build(BuildContext context) {
     return Scaffold(
-      appBar: AppBar(title: const Text('Take a Moment to Relax'), centerTitle: true),
+      appBar: AppBar(
+        title: const Text('Take a Moment to Relax'),
+        centerTitle: true,
+      ),
       body: const Center(
-        child: Text(
-          'Relax Page Content',
-          style: TextStyle(fontSize: 20),
-        ),
+        child: Text('Relax Page Content', style: TextStyle(fontSize: 20)),
       ),
     );
   }
