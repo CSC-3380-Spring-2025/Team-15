@@ -2,6 +2,7 @@ import 'package:flutter/material.dart';
 import 'pages/home.dart';
 import 'pages/relax.dart';
 import 'pages/profile.dart';
+import 'pages/shop.dart';
 
 void main() {
   runApp(const MyApp());
@@ -32,6 +33,7 @@ class _MainScreenState extends State<MainScreen> {
   final List<Widget> _pages = [
     const HomePage(),
     const RelaxPage(),
+    const ShopPage(),
     const ProfilePage(),
   ];
 
@@ -46,11 +48,13 @@ class _MainScreenState extends State<MainScreen> {
             _currentIndex = index;
           });
         },
+        selectedItemColor: Colors.blue,
+        unselectedItemColor: Colors.grey,
         items: const [
           BottomNavigationBarItem(icon: Icon(Icons.home), label: 'Home'),
           BottomNavigationBarItem(icon: Icon(Icons.tag_faces), label: 'Relax'),
+          BottomNavigationBarItem(icon: Icon(Icons.shop), label: 'Shop'),
           BottomNavigationBarItem(icon: Icon(Icons.person), label: 'Profile'),
-          BottomNavigationBarItem(icon: Icon(Icons.person), label: 'Shop'),
         ],
       ),
     );
