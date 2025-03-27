@@ -8,13 +8,11 @@ import 'pages/profile.dart';
 import 'pages/relax.dart';
 import 'pages/shop.dart';
 import 'pages/user_login.dart';
+import 'pages/pop_up_pages/breathing_exercise_page.dart';
 
-
-void main() async{
+void main() async {
   WidgetsFlutterBinding.ensureInitialized();
-  await Firebase.initializeApp(
-    options: DefaultFirebaseOptions.currentPlatform,
-  );
+  await Firebase.initializeApp(options: DefaultFirebaseOptions.currentPlatform);
   runApp(const MyApp());
 }
 
@@ -44,6 +42,7 @@ class _MainScreenState extends State<MainScreen> {
     const RelaxPage(),
     const ProfilePage(),
     const ShopPage(),
+    const BreathingExercisePage(),
   ];
 
   @override
@@ -63,6 +62,7 @@ class _MainScreenState extends State<MainScreen> {
           BottomNavigationBarItem(icon: Icon(Icons.tag_faces), label: 'Relax'),
           BottomNavigationBarItem(icon: Icon(Icons.person), label: 'Profile'),
           BottomNavigationBarItem(icon: Icon(Icons.money), label: 'Shop'),
+          BottomNavigationBarItem(icon: Icon(Icons.money), label: 'Breathing'),
         ],
       ),
     );
