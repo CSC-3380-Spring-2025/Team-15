@@ -1,4 +1,7 @@
+import 'package:firebase_auth/firebase_auth.dart';
 import 'package:flutter/material.dart';
+
+import '../services/firebase_auth.dart';
 import '/main.dart';
 
 class LoginPage extends StatefulWidget{
@@ -9,8 +12,27 @@ class LoginPage extends StatefulWidget{
   }
 
   class _LoginPageState extends State<LoginPage> {
-    TextEditingController nameController = TextEditingController();
+    TextEditingController emailController = TextEditingController();
     TextEditingController passwordController = TextEditingController();
+    final FirebaseAuthService _firebaseAuthService = FirebaseAuthService();
+
+    void _signIn() async {
+      String email = emailController.text;
+      String password = passwordController.text;
+      User? user = await _firebaseAuthService.signInWithEmailAndPassword(email, password);
+
+      if (user != null) {
+        print("Login successful");
+        Navigator.pushReplacement(
+          context,
+          MaterialPageRoute(builder: (context) => const MainScreen()),
+        );
+      } else {
+        ScaffoldMessenger.of(context).showSnackBar(
+          const SnackBar(content: Text("Login failed, email or password is incorrect")),
+        );
+      }
+    }
 
     @override
     Widget build(BuildContext context){
@@ -40,10 +62,10 @@ class LoginPage extends StatefulWidget{
               Container(
                 padding: const EdgeInsets.all(10),
                 child: TextField(
-                  controller: nameController,
+                  controller: emailController,
                   decoration: const InputDecoration(
                     border: OutlineInputBorder(),
-                    labelText: 'User Name',
+                    labelText: 'Email',
                   ),
                 ),
               ),
@@ -63,18 +85,7 @@ class LoginPage extends StatefulWidget{
                 padding: const EdgeInsets.fromLTRB(10, 0, 10, 0),
                 child: ElevatedButton(
                   child: const Text('Login'),
-                  onPressed: () {
-                    if (nameController.text.isNotEmpty && passwordController.text.isNotEmpty) {
-                      Navigator.pushReplacement(
-                        context,
-                        MaterialPageRoute(builder: (context) => const MainScreen()),
-                      );
-                    } else {
-                      ScaffoldMessenger.of(context).showSnackBar(
-                        const SnackBar(content: Text('Please enter username and password')),
-                      );
-                    }
-                  },
+                  onPressed: _signIn,
                 )
               ),
             ]
