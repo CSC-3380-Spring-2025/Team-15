@@ -91,10 +91,17 @@ class ShopPage extends StatelessWidget {
           mainAxisAlignment: MainAxisAlignment.center,
           children: [
             Text(price, style: const TextStyle(color: Colors.blue, fontWeight: FontWeight.bold)),
-            const SizedBox(height: 1),
-            ElevatedButton(
-              onPressed: () {}, // Add purchase mechanic 
-              child: const Text('Buy'), 
+            const SizedBox(height: 4),
+            SizedBox(
+            height: 30,
+            child: ElevatedButton(
+              onPressed: () {}, // Add purchase mechanic
+              style: ElevatedButton.styleFrom(
+                padding: const EdgeInsets.symmetric(horizontal: 10, vertical: 5), 
+                textStyle: const TextStyle(fontSize: 13),
+              ),
+              child: const Text('Buy'),
+              ),
             ),
           ],
         ),
