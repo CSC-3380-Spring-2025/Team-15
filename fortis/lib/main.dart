@@ -8,7 +8,6 @@ import 'pages/profile.dart';
 import 'pages/relax.dart';
 import 'pages/shop.dart';
 import 'pages/user_login.dart';
-import 'pages/pop_up_pages/breathing_exercise_page.dart';
 
 void main() async {
   WidgetsFlutterBinding.ensureInitialized();
@@ -40,9 +39,8 @@ class _MainScreenState extends State<MainScreen> {
   final List<Widget> _pages = [
     const HomePage(),
     const RelaxPage(),
-    const ProfilePage(),
     const ShopPage(),
-    const BreathingExercisePage(),
+    const ProfilePage(),
   ];
 
   @override
@@ -60,9 +58,8 @@ class _MainScreenState extends State<MainScreen> {
         items: const [
           BottomNavigationBarItem(icon: Icon(Icons.home), label: 'Home'),
           BottomNavigationBarItem(icon: Icon(Icons.tag_faces), label: 'Relax'),
-          BottomNavigationBarItem(icon: Icon(Icons.person), label: 'Profile'),
           BottomNavigationBarItem(icon: Icon(Icons.money), label: 'Shop'),
-          BottomNavigationBarItem(icon: Icon(Icons.money), label: 'Breathing'),
+          BottomNavigationBarItem(icon: Icon(Icons.person), label: 'Profile'),
         ],
       ),
     );

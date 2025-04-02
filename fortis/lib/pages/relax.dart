@@ -1,5 +1,7 @@
 import 'package:flutter/material.dart';
 
+import 'pop_up_pages/breathing_exercise_page.dart';
+
 class RelaxPage extends StatelessWidget {
   const RelaxPage({super.key});
 
@@ -136,7 +138,12 @@ class RelaxPage extends StatelessWidget {
               color: Colors.green.shade100,
               iconColor: Colors.green,
               onIconTap: () {
-                print('4-7-8 Breathing icon tapped!');
+                Navigator.push(
+                  context,
+                  MaterialPageRoute(
+                    builder: (context) => BreathingExercisePage(),
+                  ),
+                );
               },
             ),
 
