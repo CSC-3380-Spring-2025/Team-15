@@ -77,7 +77,7 @@ class _MindfulMinutesPageState extends State<MindfulMinutesPage> {
           _isPlaying = false;
         });
       } else {
-        await _audioPlayer.play(AssetSource('Body-Scan.mp3'));
+        await _audioPlayer.play(AssetSource('mindful.mp3'));
         setState(() {
           _isPlaying = true;
         });
@@ -96,7 +96,7 @@ class _MindfulMinutesPageState extends State<MindfulMinutesPage> {
     return Scaffold(
       appBar: AppBar(
         title: const Text(
-          'Body Scan Exercise',
+          'Mindful Minutes',
           style: TextStyle(fontFamily: 'Poppins', fontWeight: FontWeight.w600),
         ),
         centerTitle: true,
@@ -106,7 +106,7 @@ class _MindfulMinutesPageState extends State<MindfulMinutesPage> {
           mainAxisAlignment: MainAxisAlignment.center,
           children: [
             const Text(
-              'Body Scan Technique',
+              'Mindful Minutes',
               style: TextStyle(
                 fontFamily: 'Poppins',
                 fontSize: 22,

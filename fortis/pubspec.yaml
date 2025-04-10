@@ -65,6 +65,9 @@ flutter:
     - assets/box-breathing.mp3
     - assets/DEEP-BREATH.mp3
     - assets/Body-Scan.mp3
+    - assets/mindful.mp3
+    - assets/ocean-waves.mp3
+    - assets/easteregg.mp3
   # The following line ensures that the Material Icons font is
   # included with your application, so that you can use the icons in
   # the material Icons class.
