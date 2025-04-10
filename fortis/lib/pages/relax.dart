@@ -1,5 +1,7 @@
 import 'package:flutter/material.dart';
-
+import 'package:fortis/pages/pop_up_pages/body_scan.dart';
+import 'package:fortis/pages/pop_up_pages/box-breathing.dart';
+import 'package:fortis/pages/pop_up_pages/deep-breathing.dart';
 import 'pop_up_pages/breathing_exercise_page.dart';
 
 class RelaxPage extends StatelessWidget {
@@ -157,6 +159,12 @@ class RelaxPage extends StatelessWidget {
               icon: Icons.crop_square,
               color: Colors.blue.shade100,
               iconColor: Colors.blue,
+              onIconTap: () {
+                Navigator.push(
+                  context,
+                  MaterialPageRoute(builder: (context) => BoxBreathingPage()),
+                );
+              },
             ),
 
             const SizedBox(height: 12),
@@ -169,6 +177,12 @@ class RelaxPage extends StatelessWidget {
               icon: Icons.health_and_safety,
               color: Colors.orange.shade100,
               iconColor: Colors.orange,
+              onIconTap: () {
+                Navigator.push(
+                  context,
+                  MaterialPageRoute(builder: (context) => DeepBreathPage()),
+                );
+              },
             ),
 
             const SizedBox(height: 24),
@@ -192,6 +206,12 @@ class RelaxPage extends StatelessWidget {
               icon: Icons.self_improvement,
               color: Colors.purple.shade100,
               iconColor: Colors.purple,
+              onIconTap: () {
+                Navigator.push(
+                  context,
+                  MaterialPageRoute(builder: (context) => BodyScanPage()),
+                );
+              },
             ),
 
             const SizedBox(height: 12),
