@@ -1,4 +1,9 @@
 import 'package:flutter/material.dart';
+import 'package:fortis/pages/pop_up_pages/journal.dart';
+import 'package:fortis/pages/pop_up_pages/settings.dart';
+import 'package:fortis/pages/pop_up_pages/notifications.dart';
+import 'package:fortis/pages/pop_up_pages/help_center.dart';
+import 'package:fortis/pages/pop_up_pages/profile_details.dart';
 
 class ProfilePage extends StatelessWidget {
   const ProfilePage({super.key});
@@ -52,33 +57,58 @@ class ProfilePage extends StatelessWidget {
             _buildMenuItem(
               icon: Icons.book_outlined,
               title: 'My Journals',
-              onTap: () {},
+              onTap: () {
+                Navigator.push(
+                  context,
+                  MaterialPageRoute(builder: (context) => const MyJournalsPage()),
+                );
+              },
             ),
             _buildMenuItem(
               icon: Icons.person_outline,
               title: 'Profile',
-              onTap: () {},
+              onTap: () {
+                Navigator.push(
+                  context,
+                  MaterialPageRoute(builder: (context) => const ProfileDetailsPage()),
+                );
+              },
             ),
             _buildMenuItem(
               icon: Icons.settings_outlined,
               title: 'Settings',
-              onTap: () {},
+              onTap: () {
+                Navigator.push(
+                  context,
+                  MaterialPageRoute(builder: (context) => const SettingsPage()),
+                );
+              },
             ),
             _buildMenuItem(
               icon: Icons.notifications_outlined,
               title: 'Notification',
-              onTap: () {},
+              onTap: () {
+                Navigator.push(
+                  context,
+                  MaterialPageRoute(builder: (context) => const NotificationsPage()),
+                );
+              },
             ),
             _buildMenuItem(
               icon: Icons.help_outline,
               title: 'Help Center',
-              onTap: () {},
+              onTap: () {
+                Navigator.push(
+                  context,
+                  MaterialPageRoute(builder: (context) => const HelpCenterPage()),
+                );
+              },
             ),
             const Divider(height: 32, thickness: 1),
             _buildMenuItem(
               icon: Icons.logout_outlined,
               title: 'Logout',
-              onTap: () {},
+              onTap: () {}, 
               textColor: Colors.red,
             ),
           ],
