@@ -8,6 +8,7 @@ import 'pages/profile.dart';
 import 'pages/relax.dart';
 import 'pages/shop.dart';
 import 'pages/user_login.dart';
+import 'pages/create_account.dart';
 
 void main() async {
   WidgetsFlutterBinding.ensureInitialized();
