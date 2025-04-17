@@ -64,6 +64,7 @@ dev_dependencies:
 flutter:
   uses-material-design: true
   assets:
+    - assets/avatars/
     - assets/4-7-8-breathing.mp3
     - assets/box-breathing.mp3
     - assets/DEEP-BREATH.mp3

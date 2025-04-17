@@ -3,6 +3,7 @@ import 'package:flutter/material.dart';
 
 import '../services/firebase_auth.dart';
 import '/main.dart';
+import 'create_account.dart';
 
 class LoginPage extends StatefulWidget {
   const LoginPage({super.key});
@@ -91,6 +92,20 @@ class _LoginPageState extends State<LoginPage> {
               child: ElevatedButton(
                 onPressed: _signIn,
                 child: const Text('Login'),
+              ),
+            ),
+            TextButton(
+              onPressed: () {
+                Navigator.push(
+                  context,
+                  MaterialPageRoute(
+                    builder: (context) => const CreateAccountPage(),
+                  ),
+                );
+              },
+              child: const Text(
+                "Don't have an account? Create one",
+                style: TextStyle(fontSize: 16),
               ),
             ),
           ],
