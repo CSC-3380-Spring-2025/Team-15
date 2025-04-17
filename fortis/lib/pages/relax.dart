@@ -164,6 +164,4 @@ class _RelaxPageState extends State<RelaxPage> {
       ),
     );
   }
-
-  // Your _buildExerciseCard method stays the same!
 }
