@@ -1,7 +1,15 @@
 import 'package:flutter/material.dart';
+
+import 'package:fortis/pages/pop_up_pages/journal.dart';
+import 'package:fortis/pages/pop_up_pages/settings.dart';
+import 'package:fortis/pages/pop_up_pages/notifications.dart';
+import 'package:fortis/pages/pop_up_pages/help_center.dart';
+import 'package:fortis/pages/pop_up_pages/profile_details.dart';
+
 import 'package:firebase_auth/firebase_auth.dart';
 import 'package:cloud_firestore/cloud_firestore.dart';
 import 'package:fortis/pages/user_login.dart';
+
 
 class ProfilePage extends StatefulWidget {
   const ProfilePage({super.key});
@@ -268,6 +276,75 @@ class _ProfilePageState extends State<ProfilePage> {
                   ],
                 ),
               ),
+            ),
+            const SizedBox(height: 12),
+            const Text(
+              'Lorenzo Jackson',
+              style: TextStyle(fontSize: 18, fontWeight: FontWeight.bold),
+            ),
+            const SizedBox(height: 32),
+
+            // Menu Items
+            _buildMenuItem(
+              icon: Icons.book_outlined,
+              title: 'My Journals',
+              onTap: () {
+                Navigator.push(
+                  context,
+                  MaterialPageRoute(builder: (context) => const MyJournalsPage()),
+                );
+              },
+            ),
+            _buildMenuItem(
+              icon: Icons.person_outline,
+              title: 'Profile',
+              onTap: () {
+                Navigator.push(
+                  context,
+                  MaterialPageRoute(builder: (context) => const ProfileDetailsPage()),
+                );
+              },
+            ),
+            _buildMenuItem(
+              icon: Icons.settings_outlined,
+              title: 'Settings',
+              onTap: () {
+                Navigator.push(
+                  context,
+                  MaterialPageRoute(builder: (context) => const SettingsPage()),
+                );
+              },
+            ),
+            _buildMenuItem(
+              icon: Icons.notifications_outlined,
+              title: 'Notification',
+              onTap: () {
+                Navigator.push(
+                  context,
+                  MaterialPageRoute(builder: (context) => const NotificationsPage()),
+                );
+              },
+            ),
+            _buildMenuItem(
+              icon: Icons.help_outline,
+              title: 'Help Center',
+              onTap: () {
+                Navigator.push(
+                  context,
+                  MaterialPageRoute(builder: (context) => const HelpCenterPage()),
+                );
+              },
+            ),
+            const Divider(height: 32, thickness: 1),
+            _buildMenuItem(
+              icon: Icons.logout_outlined,
+              title: 'Logout',
+              onTap: () {}, 
+              textColor: Colors.red,
+            ),
+          ],
+        ),
+      ),
     );
   }
 
