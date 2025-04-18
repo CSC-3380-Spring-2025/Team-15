@@ -28,6 +28,7 @@ environment:
 # the latest version available on pub.dev. To see which dependencies have newer
 # versions available, run `flutter pub outdated`.
 dependencies:
+  image_picker: ^1.0.4
   audioplayers: ^5.2.0
   flutter:
     sdk: flutter
@@ -38,6 +39,8 @@ dependencies:
   table_calendar: ^3.2.0
   firebase_core: ^3.12.1
   firebase_auth: ^5.5.1
+  firebase_storage: 12.4.4
+  path: ^1.8.3
   provider: ^6.1.2
   cloud_firestore: ^5.6.5
   font_awesome_flutter: ^10.8.0
@@ -61,10 +64,14 @@ dev_dependencies:
 flutter:
   uses-material-design: true
   assets:
+    - assets/avatars/
     - assets/4-7-8-breathing.mp3
     - assets/box-breathing.mp3
     - assets/DEEP-BREATH.mp3
     - assets/Body-Scan.mp3
+    - assets/mindful.mp3
+    - assets/ocean-waves.mp3
+    - assets/easteregg.mp3
   # The following line ensures that the Material Icons font is
   # included with your application, so that you can use the icons in
   # the material Icons class.
