@@ -1,6 +1,9 @@
 import 'package:flutter/material.dart';
-
+import 'package:fortis/pages/pop_up_pages/body_scan.dart';
+import 'package:fortis/pages/pop_up_pages/box-breathing.dart';
+import 'package:fortis/pages/pop_up_pages/deep-breathing.dart';
 import 'pop_up_pages/breathing_exercise_page.dart';
+import 'pop_up_pages/beach_waves.dart';
 
 class RelaxPage extends StatelessWidget {
   const RelaxPage({super.key});
@@ -157,6 +160,12 @@ class RelaxPage extends StatelessWidget {
               icon: Icons.crop_square,
               color: Colors.blue.shade100,
               iconColor: Colors.blue,
+              onIconTap: () {
+                Navigator.push(
+                  context,
+                  MaterialPageRoute(builder: (context) => BoxBreathingPage()),
+                );
+              },
             ),
 
             const SizedBox(height: 12),
@@ -169,6 +178,12 @@ class RelaxPage extends StatelessWidget {
               icon: Icons.health_and_safety,
               color: Colors.orange.shade100,
               iconColor: Colors.orange,
+              onIconTap: () {
+                Navigator.push(
+                  context,
+                  MaterialPageRoute(builder: (context) => DeepBreathPage()),
+                );
+              },
             ),
 
             const SizedBox(height: 24),
@@ -192,6 +207,12 @@ class RelaxPage extends StatelessWidget {
               icon: Icons.self_improvement,
               color: Colors.purple.shade100,
               iconColor: Colors.purple,
+              onIconTap: () {
+                Navigator.push(
+                  context,
+                  MaterialPageRoute(builder: (context) => BodyScanPage()),
+                );
+              },
             ),
 
             const SizedBox(height: 12),
@@ -204,6 +225,12 @@ class RelaxPage extends StatelessWidget {
               icon: Icons.watch_later,
               color: Colors.teal.shade100,
               iconColor: Colors.teal,
+              onIconTap: () {
+                Navigator.push(
+                  context,
+                  MaterialPageRoute(builder: (context) => BodyScanPage()),
+                );
+              },
             ),
 
             const SizedBox(height: 24),
@@ -222,11 +249,17 @@ class RelaxPage extends StatelessWidget {
             // Sleep Story
             _buildExerciseCard(
               title: 'Beach Waves',
-              duration: '20 mins',
+              duration: '10 mins',
               sessions: '4 times',
               icon: Icons.nightlight,
               color: Colors.indigo.shade100,
               iconColor: Colors.indigo,
+              onIconTap: () {
+                Navigator.push(
+                  context,
+                  MaterialPageRoute(builder: (context) => BeachWavesPage()),
+                );
+              },
             ),
           ],
         ),
