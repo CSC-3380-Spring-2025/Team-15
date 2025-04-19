@@ -10,7 +10,6 @@ import 'package:firebase_auth/firebase_auth.dart';
 import 'package:cloud_firestore/cloud_firestore.dart';
 import 'package:fortis/pages/user_login.dart';
 
-
 class ProfilePage extends StatefulWidget {
   const ProfilePage({super.key});
 
@@ -64,6 +63,16 @@ class _ProfilePageState extends State<ProfilePage> {
         if (userData.containsKey('avatarIndex')) {
           setState(() {
             _selectedAvatarIndex = userData['avatarIndex'];
+          });
+        }
+        if (userData.containsKey('firstName')) {
+          setState(() {
+            firstName = userData['firstName'];
+          });
+        }
+        if (userData.containsKey('lastName')) {
+          setState(() {
+            lastName = userData['lastName'];
           });
         }
       }
@@ -162,6 +171,7 @@ class _ProfilePageState extends State<ProfilePage> {
           _isLoading
               ? const Center(child: CircularProgressIndicator())
               : SingleChildScrollView(
+                padding: const EdgeInsets.symmetric(vertical: 16),
                 child: Column(
                   children: [
                     // Profile section
@@ -201,12 +211,23 @@ class _ProfilePageState extends State<ProfilePage> {
                             ),
                           ),
                           const SizedBox(height: 16),
+                          // User name
+                          Text(
+                            firstName != null && lastName != null
+                                ? '$firstName $lastName'
+                                : 'Profile User',
+                            style: const TextStyle(
+                              fontSize: 18,
+                              fontWeight: FontWeight.bold,
+                            ),
+                          ),
+                          const SizedBox(height: 8),
                           // Email display
                           Text(
                             _currentUser?.email ?? '',
                             style: const TextStyle(
-                              fontSize: 18,
-                              fontWeight: FontWeight.w500,
+                              fontSize: 16,
+                              color: Colors.grey,
                             ),
                           ),
                           const SizedBox(height: 20),
@@ -215,7 +236,7 @@ class _ProfilePageState extends State<ProfilePage> {
                             onPressed: _showAvatarSelectionDialog,
                             child: const Text('Change Avatar'),
                           ),
-                          const SizedBox(height: 30),
+                          const SizedBox(height: 20),
                         ],
                       ),
                     ),
@@ -225,27 +246,62 @@ class _ProfilePageState extends State<ProfilePage> {
                     _buildMenuItem(
                       icon: Icons.book_outlined,
                       title: 'My Journals',
-                      onTap: () {},
+                      onTap: () {
+                        Navigator.push(
+                          context,
+                          MaterialPageRoute(
+                            builder: (context) => const MyJournalsPage(),
+                          ),
+                        );
+                      },
                     ),
                     _buildMenuItem(
                       icon: Icons.person_outline,
                       title: 'Profile',
-                      onTap: () {},
+                      onTap: () {
+                        Navigator.push(
+                          context,
+                          MaterialPageRoute(
+                            builder: (context) => const ProfileDetailsPage(),
+                          ),
+                        );
+                      },
                     ),
                     _buildMenuItem(
                       icon: Icons.settings_outlined,
                       title: 'Settings',
-                      onTap: () {},
+                      onTap: () {
+                        Navigator.push(
+                          context,
+                          MaterialPageRoute(
+                            builder: (context) => const SettingsPage(),
+                          ),
+                        );
+                      },
                     ),
                     _buildMenuItem(
                       icon: Icons.notifications_outlined,
                       title: 'Notification',
-                      onTap: () {},
+                      onTap: () {
+                        Navigator.push(
+                          context,
+                          MaterialPageRoute(
+                            builder: (context) => const NotificationsPage(),
+                          ),
+                        );
+                      },
                     ),
                     _buildMenuItem(
                       icon: Icons.help_outline,
                       title: 'Help Center',
-                      onTap: () {},
+                      onTap: () {
+                        Navigator.push(
+                          context,
+                          MaterialPageRoute(
+                            builder: (context) => const HelpCenterPage(),
+                          ),
+                        );
+                      },
                     ),
                     const Divider(height: 32, thickness: 1),
                     _buildMenuItem(
@@ -273,78 +329,11 @@ class _ProfilePageState extends State<ProfilePage> {
                       },
                       textColor: Colors.red,
                     ),
+                    // Add a little padding at the bottom to prevent overflow
+                    const SizedBox(height: 16),
                   ],
                 ),
               ),
-            ),
-            const SizedBox(height: 12),
-            const Text(
-              'Lorenzo Jackson',
-              style: TextStyle(fontSize: 18, fontWeight: FontWeight.bold),
-            ),
-            const SizedBox(height: 32),
-
-            // Menu Items
-            _buildMenuItem(
-              icon: Icons.book_outlined,
-              title: 'My Journals',
-              onTap: () {
-                Navigator.push(
-                  context,
-                  MaterialPageRoute(builder: (context) => const MyJournalsPage()),
-                );
-              },
-            ),
-            _buildMenuItem(
-              icon: Icons.person_outline,
-              title: 'Profile',
-              onTap: () {
-                Navigator.push(
-                  context,
-                  MaterialPageRoute(builder: (context) => const ProfileDetailsPage()),
-                );
-              },
-            ),
-            _buildMenuItem(
-              icon: Icons.settings_outlined,
-              title: 'Settings',
-              onTap: () {
-                Navigator.push(
-                  context,
-                  MaterialPageRoute(builder: (context) => const SettingsPage()),
-                );
-              },
-            ),
-            _buildMenuItem(
-              icon: Icons.notifications_outlined,
-              title: 'Notification',
-              onTap: () {
-                Navigator.push(
-                  context,
-                  MaterialPageRoute(builder: (context) => const NotificationsPage()),
-                );
-              },
-            ),
-            _buildMenuItem(
-              icon: Icons.help_outline,
-              title: 'Help Center',
-              onTap: () {
-                Navigator.push(
-                  context,
-                  MaterialPageRoute(builder: (context) => const HelpCenterPage()),
-                );
-              },
-            ),
-            const Divider(height: 32, thickness: 1),
-            _buildMenuItem(
-              icon: Icons.logout_outlined,
-              title: 'Logout',
-              onTap: () {}, 
-              textColor: Colors.red,
-            ),
-          ],
-        ),
-      ),
     );
   }
 
