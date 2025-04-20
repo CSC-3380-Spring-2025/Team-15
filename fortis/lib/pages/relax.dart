@@ -285,16 +285,14 @@ class RelaxPage extends StatelessWidget {
       ),
       child: Row(
         children: [
-          GestureDetector(
-            onTap: onIconTap,
-            child: Container(
-              padding: const EdgeInsets.all(8),
-              decoration: BoxDecoration(
-                color: color,
-                borderRadius: BorderRadius.circular(8),
-              ),
-              child: Icon(icon, color: iconColor),
+          // Left side (just an icon for display, no tap functionality)
+          Container(
+            padding: const EdgeInsets.all(8),
+            decoration: BoxDecoration(
+              color: color,
+              borderRadius: BorderRadius.circular(8),
             ),
+            child: Icon(icon, color: iconColor),
           ),
           const SizedBox(width: 16),
           Expanded(
@@ -342,7 +340,15 @@ class RelaxPage extends StatelessWidget {
               ],
             ),
           ),
-          const Icon(Icons.play_circle_fill, color: Colors.blue),
+          // Play button with GestureDetector for onTap functionality
+          GestureDetector(
+            onTap: onIconTap,
+            child: const Icon(
+              Icons.play_circle_fill,
+              color: Colors.blue,
+              size: 36,
+            ),
+          ),
         ],
       ),
     );
