@@ -13,7 +13,7 @@ class JournalEntry {
 
 ///MyJournalsPage displays a list of journal entries and navigates to a form for creating a new entry.
 class MyJournalsPage extends StatefulWidget {
-  const MyJournalsPage({Key? key}) : super(key: key);
+  const MyJournalsPage({super.key});
 
   @override
   _MyJournalsPageState createState() => _MyJournalsPageState();
@@ -103,7 +103,7 @@ class _MyJournalsPageState extends State<MyJournalsPage> {
 
 ///NewJournalEntryPage creates a form for a new journal entry
 class NewJournalEntryPage extends StatefulWidget {
-  const NewJournalEntryPage({Key? key}) : super(key: key);
+  const NewJournalEntryPage({super.key});
 
   @override
   _NewJournalEntryPageState createState() => _NewJournalEntryPageState();
@@ -215,7 +215,7 @@ class _NewJournalEntryPageState extends State<NewJournalEntryPage> {
 class JournalDetailPage extends StatelessWidget {
   final JournalEntry entry;
 
-  const JournalDetailPage({Key? key, required this.entry}) : super(key: key);
+  const JournalDetailPage({super.key, required this.entry});
 
   @override
   Widget build(BuildContext context) {

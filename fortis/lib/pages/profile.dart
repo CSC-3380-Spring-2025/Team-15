@@ -27,6 +27,11 @@ class _ProfilePageState extends State<ProfilePage> {
   int _selectedAvatarIndex = 0;
   bool _isLoading = false;
 
+  // Achievement fields
+  int _daysSignedIn = 0;
+  int _challengesCompleted = 0;
+  DateTime? _accountCreationDate;
+
   final List<String> _avatarOptions = [
     'assets/avatars/avatar_1.png',
     'assets/avatars/avatar_2.png',
@@ -48,118 +53,91 @@ class _ProfilePageState extends State<ProfilePage> {
 
   Future<void> _loadUserProfile() async {
     if (_currentUser == null) return;
-
-    setState(() {
-      _isLoading = true;
-    });
-
+    setState(() => _isLoading = true);
     try {
-      // gets the profile data from Firestore
-      DocumentSnapshot userDoc =
-          await _firestore.collection('users').doc(_currentUser!.uid).get();
-
+      DocumentSnapshot userDoc = await _firestore
+          .collection('users')
+          .doc(_currentUser!.uid)
+          .get();
       if (userDoc.exists) {
         Map<String, dynamic> userData = userDoc.data() as Map<String, dynamic>;
-        if (userData.containsKey('avatarIndex')) {
-          setState(() {
-            _selectedAvatarIndex = userData['avatarIndex'];
-          });
-        }
-        if (userData.containsKey('firstName')) {
-          setState(() {
-            firstName = userData['firstName'];
-          });
-        }
-        if (userData.containsKey('lastName')) {
-          setState(() {
-            lastName = userData['lastName'];
-          });
+        _selectedAvatarIndex = userData['avatarIndex'] ?? _selectedAvatarIndex;
+        firstName = userData['firstName'] ?? firstName;
+        lastName = userData['lastName'] ?? lastName;
+        _daysSignedIn = userData['daysSignedIn'] ?? _daysSignedIn;
+        _challengesCompleted = userData['challengesCompleted'] ?? _challengesCompleted;
+        if (userData['createdAt'] != null) {
+          _accountCreationDate = (userData['createdAt'] as Timestamp).toDate();
         }
       }
     } catch (e) {
-      print('Error loading user profile: $e');
+      debugPrint('Error loading user profile: $e');
     } finally {
-      setState(() {
-        _isLoading = false;
-      });
+      setState(() => _isLoading = false);
     }
   }
 
   Future<void> _updateAvatar(int index) async {
     if (_currentUser == null) return;
-
     setState(() {
       _isLoading = true;
       _selectedAvatarIndex = index;
     });
-
     try {
-      // it updates the user's profile in Firestore
       await _firestore.collection('users').doc(_currentUser!.uid).set({
         'avatarIndex': index,
         'updatedAt': FieldValue.serverTimestamp(),
       }, SetOptions(merge: true));
-
       ScaffoldMessenger.of(context).showSnackBar(
         const SnackBar(content: Text('Avatar updated successfully')),
       );
     } catch (e) {
-      print('Error updating avatar: $e');
+      debugPrint('Error updating avatar: $e');
       ScaffoldMessenger.of(context).showSnackBar(
-        SnackBar(content: Text('Failed to update avatar: ${e.toString()}')),
+        SnackBar(content: Text('Failed to update avatar: \$e')),
       );
     } finally {
-      setState(() {
-        _isLoading = false;
-      });
+      setState(() => _isLoading = false);
     }
   }
 
   void _showAvatarSelectionDialog() {
     showDialog(
       context: context,
-      builder:
-          (context) => AlertDialog(
-            title: const Text('Select Avatar'),
-            content: SizedBox(
-              width: double.maxFinite,
-              child: GridView.builder(
-                shrinkWrap: true,
-                gridDelegate: const SliverGridDelegateWithFixedCrossAxisCount(
-                  crossAxisCount: 3,
-                  mainAxisSpacing: 10,
-                  crossAxisSpacing: 10,
-                ),
-                itemCount: _avatarOptions.length,
-                itemBuilder: (context, index) {
-                  return InkWell(
-                    onTap: () {
-                      Navigator.of(context).pop();
-                      _updateAvatar(index);
-                    },
-                    child: CircleAvatar(
-                      backgroundImage: AssetImage(_avatarOptions[index]),
-                      radius: 30,
-                      child:
-                          _selectedAvatarIndex == index
-                              ? const Icon(
-                                Icons.check_circle,
-                                color: Colors.green,
-                                size: 24,
-                              )
-                              : null,
-                    ),
-                  );
-                },
+      builder: (_) => AlertDialog(
+        title: const Text('Select Avatar'),
+        content: SizedBox(
+          width: double.maxFinite,
+          child: GridView.builder(
+            shrinkWrap: true,
+            gridDelegate: const SliverGridDelegateWithFixedCrossAxisCount(
+              crossAxisCount: 3,
+              mainAxisSpacing: 10,
+              crossAxisSpacing: 10,
+            ),
+            itemCount: _avatarOptions.length,
+            itemBuilder: (context, index) => InkWell(
+              onTap: () {
+                Navigator.of(context).pop();
+                _updateAvatar(index);
+              },
+              child: CircleAvatar(
+                radius: 30,
+                backgroundImage: AssetImage(_avatarOptions[index]),
+                child: _selectedAvatarIndex == index
+                    ? const Icon(Icons.check_circle, color: Colors.green)
+                    : null,
               ),
             ),
-            actions: [
-              TextButton(
-                onPressed: () => Navigator.of(context).pop(),
-                child: const Text('Cancel'),
-              ),
-            ],
           ),
+        ),
+        actions: [
+          TextButton(
+            onPressed: () => Navigator.of(context).pop(),
+            child: const Text('Cancel'),
+          ),
+        ],
+      ),
     );
   }
 
@@ -167,173 +145,162 @@ class _ProfilePageState extends State<ProfilePage> {
   Widget build(BuildContext context) {
     return Scaffold(
       appBar: AppBar(title: const Text('Profile'), centerTitle: true),
-      body:
-          _isLoading
-              ? const Center(child: CircularProgressIndicator())
-              : SingleChildScrollView(
-                padding: const EdgeInsets.symmetric(vertical: 16),
-                child: Column(
-                  children: [
-                    // Profile section
-                    Container(
-                      padding: const EdgeInsets.all(16),
-                      child: Column(
-                        children: [
-                          const SizedBox(height: 20),
-                          // Profile image
-                          GestureDetector(
-                            onTap: _showAvatarSelectionDialog,
-                            child: Stack(
+      body: _isLoading
+          ? const Center(child: CircularProgressIndicator())
+          : SingleChildScrollView(
+              padding: const EdgeInsets.symmetric(vertical: 16),
+              child: Column(
+                crossAxisAlignment: CrossAxisAlignment.stretch,
+                children: [
+                  // Profile header
+                  Padding(
+                    padding: const EdgeInsets.all(16),
+                    child: Column(
+                      children: [
+                        GestureDetector(
+                          onTap: _showAvatarSelectionDialog,
+                          child: CircleAvatar(
+                            radius: 50,
+                            backgroundImage:
+                                AssetImage(_avatarOptions[_selectedAvatarIndex]),
+                          ),
+                        ),
+                        const SizedBox(height: 12),
+                        Text(
+                          firstName != null && lastName != null
+                              ? '$firstName $lastName'
+                              : 'Profile User',
+                          style: const TextStyle(
+                            fontSize: 18,
+                            fontWeight: FontWeight.bold,
+                          ),
+                        ),
+                        const SizedBox(height: 4),
+                        Text(
+                          _currentUser?.email ?? '',
+                          style: const TextStyle(color: Colors.grey),
+                        ),
+                        const SizedBox(height: 12),
+                        ElevatedButton(
+                          onPressed: _showAvatarSelectionDialog,
+                          child: const Text('Change Avatar'),
+                        ),
+                      ],
+                    ),
+                  ),
+                  const Divider(),
+
+                  // Achievements
+                  Padding(
+                    padding: const EdgeInsets.symmetric(horizontal: 16),
+                    child: Column(
+                      crossAxisAlignment: CrossAxisAlignment.start,
+                      children: [
+                        const Text(
+                          'Achievements',
+                          style: TextStyle(
+                            fontSize: 16,
+                            fontWeight: FontWeight.w600,
+                          ),
+                        ),
+                        const SizedBox(height: 8),
+                        Card(
+                          child: Padding(
+                            padding: const EdgeInsets.all(12),
+                            child: Column(
                               children: [
-                                CircleAvatar(
-                                  radius: 50,
-                                  backgroundImage: AssetImage(
-                                    _avatarOptions[_selectedAvatarIndex],
+                                ListTile(
+                                  leading: const Icon(Icons.cake),
+                                  title: const Text('Account Created'),
+                                  subtitle: Text(
+                                    _accountCreationDate != null
+                                        ? '${_accountCreationDate!.toLocal()}'.split(' ')[0]
+                                        : 'N/A',
                                   ),
                                 ),
-                                Positioned(
-                                  bottom: 0,
-                                  right: 0,
-                                  child: Container(
-                                    padding: const EdgeInsets.all(4),
-                                    decoration: BoxDecoration(
-                                      color: Colors.blue,
-                                      borderRadius: BorderRadius.circular(20),
-                                    ),
-                                    child: const Icon(
-                                      Icons.edit,
-                                      color: Colors.white,
-                                      size: 20,
-                                    ),
-                                  ),
+                                ListTile(
+                                  leading: const Icon(Icons.calendar_today),
+                                  title: const Text('Days Signed In'),
+                                  trailing: Text('$_daysSignedIn'),
+                                ),
+                                ListTile(
+                                  leading: const Icon(Icons.check_circle_outline),
+                                  title: const Text('Challenges Completed'),
+                                  trailing: Text('$_challengesCompleted'),
                                 ),
                               ],
                             ),
                           ),
-                          const SizedBox(height: 16),
-                          // User name
-                          Text(
-                            firstName != null && lastName != null
-                                ? '$firstName $lastName'
-                                : 'Profile User',
-                            style: const TextStyle(
-                              fontSize: 18,
-                              fontWeight: FontWeight.bold,
-                            ),
-                          ),
-                          const SizedBox(height: 8),
-                          // Email display
-                          Text(
-                            _currentUser?.email ?? '',
-                            style: const TextStyle(
-                              fontSize: 16,
-                              color: Colors.grey,
-                            ),
-                          ),
-                          const SizedBox(height: 20),
-                          // Change avatar button
-                          ElevatedButton(
-                            onPressed: _showAvatarSelectionDialog,
-                            child: const Text('Change Avatar'),
-                          ),
-                          const SizedBox(height: 20),
-                        ],
-                      ),
+                        ),
+                      ],
                     ),
-                    // Divider
-                    const Divider(thickness: 1),
-                    // Menu items
-                    _buildMenuItem(
-                      icon: Icons.book_outlined,
-                      title: 'My Journals',
-                      onTap: () {
-                        Navigator.push(
-                          context,
-                          MaterialPageRoute(
-                            builder: (context) => const MyJournalsPage(),
-                          ),
-                        );
-                      },
+                  ),
+                  const Divider(),
+
+                  // Menu
+                  _buildMenuItem(
+                    icon: Icons.book_outlined,
+                    title: 'My Journals',
+                    onTap: () => Navigator.push(
+                      context,
+                      MaterialPageRoute(
+                          builder: (_) => const MyJournalsPage()),
                     ),
-                    _buildMenuItem(
-                      icon: Icons.person_outline,
-                      title: 'Profile',
-                      onTap: () {
-                        Navigator.push(
-                          context,
-                          MaterialPageRoute(
-                            builder: (context) => const ProfileDetailsPage(),
-                          ),
-                        );
-                      },
+                  ),
+                  _buildMenuItem(
+                    icon: Icons.person_outline,
+                    title: 'Profile',
+                    onTap: () => Navigator.push(
+                      context,
+                      MaterialPageRoute(
+                          builder: (_) => const ProfileDetailsPage()),
                     ),
-                    _buildMenuItem(
-                      icon: Icons.settings_outlined,
-                      title: 'Settings',
-                      onTap: () {
-                        Navigator.push(
-                          context,
-                          MaterialPageRoute(
-                            builder: (context) => const SettingsPage(),
-                          ),
-                        );
-                      },
+                  ),
+                  _buildMenuItem(
+                    icon: Icons.settings_outlined,
+                    title: 'Settings',
+                    onTap: () => Navigator.push(
+                      context,
+                      MaterialPageRoute(
+                          builder: (_) => const SettingsPage()),
                     ),
-                    _buildMenuItem(
-                      icon: Icons.notifications_outlined,
-                      title: 'Notification',
-                      onTap: () {
-                        Navigator.push(
-                          context,
-                          MaterialPageRoute(
-                            builder: (context) => const NotificationsPage(),
-                          ),
-                        );
-                      },
+                  ),
+                  _buildMenuItem(
+                    icon: Icons.notifications_outlined,
+                    title: 'Notification',
+                    onTap: () => Navigator.push(
+                      context,
+                      MaterialPageRoute(
+                          builder: (_) => const NotificationsPage()),
                     ),
-                    _buildMenuItem(
-                      icon: Icons.help_outline,
-                      title: 'Help Center',
-                      onTap: () {
-                        Navigator.push(
-                          context,
-                          MaterialPageRoute(
-                            builder: (context) => const HelpCenterPage(),
-                          ),
-                        );
-                      },
+                  ),
+                  _buildMenuItem(
+                    icon: Icons.help_outline,
+                    title: 'Help Center',
+                    onTap: () => Navigator.push(
+                      context,
+                      MaterialPageRoute(
+                          builder: (_) => const HelpCenterPage()),
                     ),
-                    const Divider(height: 32, thickness: 1),
-                    _buildMenuItem(
-                      icon: Icons.logout_outlined,
-                      title: 'Logout',
-                      onTap: () async {
-                        try {
-                          await FirebaseAuth.instance.signOut();
-                          Navigator.of(context).pushAndRemoveUntil(
-                            MaterialPageRoute(
-                              builder: (context) => const LoginPage(),
-                            ),
-                            (route) => false,
-                          );
-                        } catch (e) {
-                          print('Error signing out: $e');
-                          ScaffoldMessenger.of(context).showSnackBar(
-                            SnackBar(
-                              content: Text(
-                                'Error signing out: ${e.toString()}',
-                              ),
-                            ),
-                          );
-                        }
-                      },
-                      textColor: Colors.red,
-                    ),
-                    // Add a little padding at the bottom to prevent overflow
-                    const SizedBox(height: 16),
-                  ],
-                ),
+                  ),
+                  const Divider(),
+                  _buildMenuItem(
+                    icon: Icons.logout_outlined,
+                    title: 'Logout',
+                    textColor: Colors.red,
+                    onTap: () async {
+                      await _auth.signOut();
+                      Navigator.of(context).pushAndRemoveUntil(
+                        MaterialPageRoute(
+                            builder: (_) => const LoginPage()),
+                        (route) => false,
+                      );
+                    },
+                  ),
+                  const SizedBox(height: 16),
+                ],
               ),
+            ),
     );
   }
 
@@ -345,9 +312,13 @@ class _ProfilePageState extends State<ProfilePage> {
   }) {
     return ListTile(
       leading: Icon(icon),
-      title: Text(title, style: TextStyle(fontSize: 16, color: textColor)),
+      title: Text(title, style: TextStyle(color: textColor)),
       trailing: const Icon(Icons.chevron_right),
       onTap: onTap,
     );
   }
 }
+
+  
+
+
