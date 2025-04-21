@@ -4,6 +4,7 @@ import 'package:fortis/pages/pop_up_pages/box-breathing.dart';
 import 'package:fortis/pages/pop_up_pages/deep-breathing.dart';
 import 'pop_up_pages/breathing_exercise_page.dart';
 import 'pop_up_pages/beach_waves.dart';
+import 'pop_up_pages/grounding_exercise.dart';
 
 class RelaxPage extends StatelessWidget {
   const RelaxPage({super.key});
@@ -36,8 +37,13 @@ class RelaxPage extends StatelessWidget {
             // Anxiety Relief Section
             GestureDetector(
               onTap: () {
-                print('Anxiety Relief tapped!');
-                // Will add functionality here
+                Navigator.push(
+                          context,
+                          MaterialPageRoute(
+                            builder: (context) => const GroundingExercisePage(),
+                          ),
+                        );
+              
               },
               child: Row(
                 children: [
