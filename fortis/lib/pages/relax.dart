@@ -4,6 +4,7 @@ import 'package:fortis/pages/pop_up_pages/box-breathing.dart';
 import 'package:fortis/pages/pop_up_pages/deep-breathing.dart';
 import 'pop_up_pages/breathing_exercise_page.dart';
 import 'pop_up_pages/beach_waves.dart';
+import 'pop_up_pages/grounding_exercise.dart';
 
 class RelaxPage extends StatelessWidget {
   const RelaxPage({super.key});
@@ -36,8 +37,13 @@ class RelaxPage extends StatelessWidget {
             // Anxiety Relief Section
             GestureDetector(
               onTap: () {
-                print('Anxiety Relief tapped!');
-                // Will add functionality here
+                Navigator.push(
+                          context,
+                          MaterialPageRoute(
+                            builder: (context) => const GroundingExercisePage(),
+                          ),
+                        );
+              
               },
               child: Row(
                 children: [
@@ -285,16 +291,14 @@ class RelaxPage extends StatelessWidget {
       ),
       child: Row(
         children: [
-          GestureDetector(
-            onTap: onIconTap,
-            child: Container(
-              padding: const EdgeInsets.all(8),
-              decoration: BoxDecoration(
-                color: color,
-                borderRadius: BorderRadius.circular(8),
-              ),
-              child: Icon(icon, color: iconColor),
+          // Left side (just an icon for display, no tap functionality)
+          Container(
+            padding: const EdgeInsets.all(8),
+            decoration: BoxDecoration(
+              color: color,
+              borderRadius: BorderRadius.circular(8),
             ),
+            child: Icon(icon, color: iconColor),
           ),
           const SizedBox(width: 16),
           Expanded(
@@ -342,7 +346,15 @@ class RelaxPage extends StatelessWidget {
               ],
             ),
           ),
-          const Icon(Icons.play_circle_fill, color: Colors.blue),
+          // Play button with GestureDetector for onTap functionality
+          GestureDetector(
+            onTap: onIconTap,
+            child: const Icon(
+              Icons.play_circle_fill,
+              color: Colors.blue,
+              size: 36,
+            ),
+          ),
         ],
       ),
     );

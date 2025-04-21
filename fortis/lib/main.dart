@@ -6,7 +6,7 @@ import 'pages/relax.dart';
 import 'pages/shop.dart';
 import 'pages/user_login.dart';
 import 'pages/home.dart'; // Updated version of HomePage below
-import 'pages/create_account.dart';
+import 'pages/friends.dart';
 
 void main() async {
   WidgetsFlutterBinding.ensureInitialized();
@@ -73,6 +73,7 @@ class _MainScreenState extends State<MainScreen> {
       ),
       const RelaxPage(),
       const ShopPage(),
+      const FriendsPage(),
       const ProfilePage(),
     ];
 
@@ -93,6 +94,7 @@ class _MainScreenState extends State<MainScreen> {
             icon: Icon(Icons.shopping_bag_outlined),
             label: 'Shop',
           ),
+          BottomNavigationBarItem(icon: Icon(Icons.group), label: 'Friends'),
           BottomNavigationBarItem(icon: Icon(Icons.person), label: 'Profile'),
         ],
       ),
