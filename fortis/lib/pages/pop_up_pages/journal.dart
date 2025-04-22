@@ -5,13 +5,10 @@ class JournalEntry {
   final String title;
   final String content;
 
-  JournalEntry({
-    required this.title,
-    required this.content,
-  });
+  JournalEntry({required this.title, required this.content});
 }
 
-///MyJournalsPage displays a list of journal entries and navigates to a form for creating a new entry.
+//MyJournalsPage displays a list of journal entries and navigates to a form for creating a new entry.
 class MyJournalsPage extends StatefulWidget {
   const MyJournalsPage({super.key});
 
@@ -69,13 +66,14 @@ class _MyJournalsPageState extends State<MyJournalsPage> {
               );
             }
 
-            List<JournalEntry> entries = snapshot.data!.docs.map((doc) {
-              final data = doc.data() as Map<String, dynamic>;
-              return JournalEntry(
-                title: data['title'] as String? ?? '',
-                content: data['content'] as String? ?? '',
-              );
-            }).toList();
+            List<JournalEntry> entries =
+                snapshot.data!.docs.map((doc) {
+                  final data = doc.data() as Map<String, dynamic>;
+                  return JournalEntry(
+                    title: data['title'] as String? ?? '',
+                    content: data['content'] as String? ?? '',
+                  );
+                }).toList();
 
             return ListView.separated(
               itemCount: entries.length,
@@ -115,7 +113,6 @@ class _NewJournalEntryPageState extends State<NewJournalEntryPage> {
   final TextEditingController _contentController = TextEditingController();
   bool _isSaving = false;
 
- 
   Future<void> _saveEntry() async {
     if (_formKey.currentState!.validate()) {
       setState(() {
@@ -127,14 +124,14 @@ class _NewJournalEntryPageState extends State<NewJournalEntryPage> {
           'title': _titleController.text,
           'content': _contentController.text,
         });
-        ScaffoldMessenger.of(context).showSnackBar(
-          const SnackBar(content: Text('Journal Entry Saved!')),
-        );
+        ScaffoldMessenger.of(
+          context,
+        ).showSnackBar(const SnackBar(content: Text('Journal Entry Saved!')));
         Navigator.of(context).pop();
       } catch (e) {
-        ScaffoldMessenger.of(context).showSnackBar(
-          SnackBar(content: Text('Error: Please try again')),
-        );
+        ScaffoldMessenger.of(
+          context,
+        ).showSnackBar(SnackBar(content: Text('Error: Please try again')));
       } finally {
         setState(() {
           _isSaving = false;
@@ -153,16 +150,13 @@ class _NewJournalEntryPageState extends State<NewJournalEntryPage> {
   @override
   Widget build(BuildContext context) {
     return Scaffold(
-      appBar: AppBar(
-        title: const Text('New Journal Entry'),
-      ),
+      appBar: AppBar(title: const Text('New Journal Entry')),
       body: Padding(
         padding: const EdgeInsets.all(16.0),
         child: Form(
           key: _formKey,
           child: Column(
             children: [
-
               TextFormField(
                 controller: _titleController,
                 decoration: const InputDecoration(
@@ -177,7 +171,7 @@ class _NewJournalEntryPageState extends State<NewJournalEntryPage> {
                 },
               ),
               const SizedBox(height: 16),
-             
+
               TextFormField(
                 controller: _contentController,
                 decoration: const InputDecoration(
@@ -195,13 +189,14 @@ class _NewJournalEntryPageState extends State<NewJournalEntryPage> {
               const SizedBox(height: 24),
               ElevatedButton(
                 onPressed: _isSaving ? null : _saveEntry,
-                child: _isSaving
-                    ? const SizedBox(
-                        height: 20,
-                        width: 20,
-                        child: CircularProgressIndicator(strokeWidth: 2),
-                      )
-                    : const Text('Save Entry'),
+                child:
+                    _isSaving
+                        ? const SizedBox(
+                          height: 20,
+                          width: 20,
+                          child: CircularProgressIndicator(strokeWidth: 2),
+                        )
+                        : const Text('Save Entry'),
               ),
             ],
           ),
@@ -211,7 +206,7 @@ class _NewJournalEntryPageState extends State<NewJournalEntryPage> {
   }
 }
 
-///JournalDetailPage displays the selected journal entry.
+//JournalDetailPage displays the selected journal entry.
 class JournalDetailPage extends StatelessWidget {
   final JournalEntry entry;
 
@@ -220,9 +215,7 @@ class JournalDetailPage extends StatelessWidget {
   @override
   Widget build(BuildContext context) {
     return Scaffold(
-      appBar: AppBar(
-        title: Text(entry.title),
-      ),
+      appBar: AppBar(title: Text(entry.title)),
       body: Padding(
         padding: const EdgeInsets.all(16.0),
         child: Text(
