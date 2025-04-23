@@ -21,44 +21,36 @@ class _BoxBreathingPageState extends State<BoxBreathingPage> {
   void initState() {
     super.initState();
 
-    // Listen for when the audio completes
     _audioPlayer.onPlayerComplete.listen((_) {
       setState(() {
         _isPlaying = false;
       });
 
-      // Award points and show completion dialog
       _awardPoints();
       _showCompletionDialog();
     });
   }
 
   Future<void> _awardPoints() async {
-    // Don't award points if already awarded for this session
     if (_pointsAwarded) return;
 
     final user = _auth.currentUser;
     if (user == null) return;
 
     try {
-      // Get current points
       final userDoc = await _firestore.collection('users').doc(user.uid).get();
       int currentPoints = userDoc.data()?['points'] ?? 0;
 
-      // Add 20 points
       int newPoints = currentPoints + 20;
 
-      // Update points in Firestore
       await _firestore.collection('users').doc(user.uid).set({
         'points': newPoints,
       }, SetOptions(merge: true));
 
-      // Mark points as awarded to prevent duplicate awards
       setState(() {
         _pointsAwarded = true;
       });
 
-      // Also update today's challenge if there's a meditation challenge
       await _updateMeditationChallenge();
     } catch (e) {
       print('Error awarding points: $e');
@@ -91,12 +83,10 @@ class _BoxBreathingPageState extends State<BoxBreathingPage> {
         List<Map<String, dynamic>> todayChallenges =
             List<Map<String, dynamic>>.from(challenges);
 
-        // Find meditation challenge index
         int meditationIndex = todayChallenges.indexWhere(
           (c) => c['name'].toString().contains('Meditate') && !c['completed'],
         );
 
-        // If found and not completed, mark it as completed
         if (meditationIndex != -1) {
           todayChallenges[meditationIndex]['completed'] = true;
 
@@ -158,9 +148,8 @@ class _BoxBreathingPageState extends State<BoxBreathingPage> {
                 style: TextStyle(fontFamily: 'Poppins', color: Colors.blue),
               ),
               onPressed: () {
-                // Close dialog and return to previous screen
-                Navigator.of(context).pop(); // Close dialog
-                Navigator.of(context).pop(); // Return to relax page
+                Navigator.of(context).pop();
+                Navigator.of(context).pop();
               },
             ),
           ],
