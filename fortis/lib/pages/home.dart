@@ -7,6 +7,8 @@ class HomePage extends StatelessWidget {
   final int points;
   final void Function(int index) onToggle;
   final void Function(DateTime selectedDay) onDaySelected;
+  final Map<DateTime, bool> completedDays;
+  final int streak;
 
   const HomePage({
     super.key,
@@ -15,15 +17,28 @@ class HomePage extends StatelessWidget {
     required this.points,
     required this.onToggle,
     required this.onDaySelected,
+    required this.completedDays,
+    required this.streak,
   });
 
   @override
   Widget build(BuildContext context) {
+    final bool isToday = isSameDay(today, DateTime.now());
+
     return Scaffold(
       appBar: AppBar(title: const Text('Welcome!'), centerTitle: true),
       body: Column(
         children: [
           const SizedBox(height: 20),
+          Text(
+            "🔥 Current Streak: $streak Day${streak == 1 ? '' : 's'}",
+            style: const TextStyle(
+              fontSize: 22,
+              fontWeight: FontWeight.bold,
+              color: Colors.orange,
+            ),
+          ),
+          const SizedBox(height: 10),
           Text(
             "Selected Date: ${today.toLocal()}".split(' ')[0],
             style: const TextStyle(fontSize: 18, fontWeight: FontWeight.bold),
@@ -35,8 +50,102 @@ class HomePage extends StatelessWidget {
             firstDay: DateTime.utc(2010, 1, 1),
             lastDay: DateTime.utc(2030, 12, 31),
             selectedDayPredicate: (day) => isSameDay(today, day),
-            onDaySelected: (selectedDay, focusedDay) =>
-                onDaySelected(selectedDay),
+            onDaySelected: (selectedDay, focusedDay) => onDaySelected(selectedDay),
+            calendarBuilders: CalendarBuilders(
+              defaultBuilder: (context, day, focusedDay) {
+                final normalizedDay = DateTime(day.year, day.month, day.day);
+                final isCompleted = completedDays[normalizedDay] ?? false;
+
+                if (isCompleted) {
+                  return Container(
+                    margin: const EdgeInsets.all(6.0),
+                    alignment: Alignment.center,
+                    decoration: BoxDecoration(
+                      color: Colors.green,
+                      shape: BoxShape.circle,
+                    ),
+                    child: Text(
+                      '${day.day}',
+                      style: const TextStyle(
+                        color: Colors.white,
+                        fontWeight: FontWeight.bold,
+                      ),
+                    ),
+                  );
+                }
+                return null;
+              },
+              todayBuilder: (context, day, focusedDay) {
+                final normalizedDay = DateTime(day.year, day.month, day.day);
+                final isCompleted = completedDays[normalizedDay] ?? false;
+
+                if (isCompleted) {
+                  return Container(
+                    margin: const EdgeInsets.all(6.0),
+                    alignment: Alignment.center,
+                    decoration: BoxDecoration(
+                      color: Colors.green,
+                      shape: BoxShape.circle,
+                    ),
+                    child: Text(
+                      '${day.day}',
+                      style: const TextStyle(
+                        color: Colors.white,
+                        fontWeight: FontWeight.bold,
+                      ),
+                    ),
+                  );
+                }
+
+                return Container(
+                  margin: const EdgeInsets.all(6.0),
+                  alignment: Alignment.center,
+                  decoration: BoxDecoration(
+                    color: Colors.blueAccent,
+                    shape: BoxShape.circle,
+                  ),
+                  child: Text(
+                    '${day.day}',
+                    style: const TextStyle(color: Colors.white),
+                  ),
+                );
+              },
+              selectedBuilder: (context, day, focusedDay) {
+                final normalizedDay = DateTime(day.year, day.month, day.day);
+                final isCompleted = completedDays[normalizedDay] ?? false;
+
+                if (isCompleted) {
+                  return Container(
+                    margin: const EdgeInsets.all(6.0),
+                    alignment: Alignment.center,
+                    decoration: BoxDecoration(
+                      color: Colors.green.shade700,
+                      shape: BoxShape.circle,
+                    ),
+                    child: Text(
+                      '${day.day}',
+                      style: const TextStyle(
+                        color: Colors.white,
+                        fontWeight: FontWeight.bold,
+                      ),
+                    ),
+                  );
+                }
+
+                return Container(
+                  margin: const EdgeInsets.all(6.0),
+                  alignment: Alignment.center,
+                  decoration: BoxDecoration(
+                    color: Colors.orangeAccent,
+                    shape: BoxShape.circle,
+                  ),
+                  child: Text(
+                    '${day.day}',
+                    style: const TextStyle(color: Colors.white),
+                  ),
+                );
+              },
+            ),
           ),
           const SizedBox(height: 20),
           Text(
@@ -59,10 +168,7 @@ class HomePage extends StatelessWidget {
               itemBuilder: (context, index) {
                 var challenge = challenges[index];
                 return Card(
-                  margin: const EdgeInsets.symmetric(
-                    horizontal: 16,
-                    vertical: 8,
-                  ),
+                  margin: const EdgeInsets.symmetric(horizontal: 16, vertical: 8),
                   shape: RoundedRectangleBorder(
                     borderRadius: BorderRadius.circular(12),
                   ),
@@ -78,11 +184,23 @@ class HomePage extends StatelessWidget {
                       style: TextStyle(
                         fontSize: 18,
                         fontWeight: FontWeight.bold,
-                        color:
-                            challenge["completed"] ? Colors.green : Colors.black,
+                        color: challenge["completed"]
+                            ? Colors.green
+                            : (isToday ? Colors.black : Colors.grey),
                       ),
                     ),
-                    onTap: () => onToggle(index),
+                    onTap: () {
+                      if (isToday) {
+                        onToggle(index);
+                      } else {
+                        ScaffoldMessenger.of(context).showSnackBar(
+                          const SnackBar(
+                            content: Text("You can only complete today's challenges!"),
+                            duration: Duration(seconds: 2),
+                          ),
+                        );
+                      }
+                    },
                   ),
                 );
               },
