@@ -11,14 +11,14 @@ class _FriendsPageState extends State<FriendsPage> {
   final TextEditingController _searchController = TextEditingController();
   String _searchQuery = '';
 
-  // test users for reference, going to implement actual users later
-  final List<Map<String, String>> _testFriends = [
+  // test users
+  final List<Map<String, dynamic>> _testFriends = [
     {'username': 'Test1', 'id': '1', 'avatarIndex': '0'},
     {'username': 'Test2', 'id': '2', 'avatarIndex': '1'},
     {'username': 'Test3', 'id': '3', 'avatarIndex': '2'},
     {'username': 'Test4', 'id': '4', 'avatarIndex': '3'},
   ];
-  final List<Map<String, String>> _testAllUsers = [
+  final List<Map<String, dynamic>> _testAllUsers = [
     {'username': 'Test1', 'id': '1', 'avatarIndex': '0'},
     {'username': 'Test2', 'id': '2', 'avatarIndex': '1'},
     {'username': 'Test3', 'id': '3', 'avatarIndex': '2'},
@@ -27,9 +27,8 @@ class _FriendsPageState extends State<FriendsPage> {
     {'username': 'Test6', 'id': '6', 'avatarIndex': '5'},
     {'username': 'Test7', 'id': '7', 'avatarIndex': '6'},
   ];
-  final String _currentTestUserId = 'your_user_id'; 
 
-  final List<String> _avatarOptions = [
+  final List<String> _avatarOptions = const [
     'assets/avatars/avatar_1.png',
     'assets/avatars/avatar_2.png',
     'assets/avatars/avatar_3.png',
@@ -59,7 +58,7 @@ class _FriendsPageState extends State<FriendsPage> {
     });
   }
 
-  List<Map<String, String>> get _displayedUsers {
+  List<Map<String, dynamic>> get _displayedUsers {
     if (_searchQuery.isEmpty) {
       return _testFriends;
     } else {
@@ -70,24 +69,26 @@ class _FriendsPageState extends State<FriendsPage> {
     }
   }
 
-  void _userProfileClick(Map<String, String> user) {
-    if (_testFriends.any((friend) => friend['id'] == user['id'])) {
-      print('${user['username']}');
-      Navigator.push(
-        context,
-        MaterialPageRoute(
-          builder: (context) => TestProfilePage(username: user['username']!, avatarIndex: user['avatarIndex']!, isFriend: true),
+  List<Map<String, dynamic>> get _recommendedFriends {
+    return _testAllUsers
+        .where((user) => !_testFriends.any((friend) => friend['id'] == user['id']))
+        .toList();
+  }
+
+  void _userProfileClick(Map<String, dynamic> user) {
+    final bool isFriend = _testFriends.any((friend) => friend['id'] == user['id']);
+    Navigator.push(
+      context,
+      MaterialPageRoute(
+        builder: (context) => FriendProfilePage(
+          username: user['username']!,
+          avatarIndex: user['avatarIndex']!,
+          isFriend: isFriend,
+          streakCount: isFriend ? 3 : 0, 
+          achievements: isFriend ? ['Consistency'] : [],
         ),
-      );
-    } else if (user['id'] != _currentTestUserId) {
-      print('${user['username']}');
-      Navigator.push(
-        context,
-        MaterialPageRoute(
-          builder: (context) => TestProfilePage(username: user['username']!, avatarIndex: user['avatarIndex']!, isFriend: false),
-        ),
-      );
-    }
+      ),
+    );
   }
 
   @override
@@ -119,17 +120,44 @@ class _FriendsPageState extends State<FriendsPage> {
             },
           ),
         ),
+        const Divider(),
+        Padding(
+          padding: const EdgeInsets.all(8.0),
+          child: Text(
+            'Recommended Friends',
+            style: Theme.of(context).textTheme.headlineSmall,
+          ),
+        ),
+        SizedBox(
+          height: MediaQuery.of(context).size.height / 3, 
+          child: ListView.builder(
+            itemCount: _recommendedFriends.length,
+            itemBuilder: (context, index) {
+              final user = _recommendedFriends[index];
+              return ListTile(
+                leading: CircleAvatar(
+                  backgroundImage: AssetImage(_avatarOptions[int.parse(user['avatarIndex']!)]),
+                ),
+                title: Text(user['username']!),
+                onTap: () => _userProfileClick(user),
+              );
+            },
+          ),
+        ),
       ],
     );
   }
 }
 
-// test profile page for reference, going to set up actual friend's profile later
-class TestProfilePage extends StatelessWidget {
+
+class FriendProfilePage extends StatelessWidget {
   final String username;
   final String avatarIndex;
   final bool isFriend;
-  final List<String> _avatarOptions = const [ 
+  final int streakCount;
+  final List<String> achievements;
+
+  final List<String> _avatarOptions = const [
     'assets/avatars/avatar_1.png',
     'assets/avatars/avatar_2.png',
     'assets/avatars/avatar_3.png',
@@ -141,13 +169,14 @@ class TestProfilePage extends StatelessWidget {
     'assets/avatars/avatar_9.png',
   ];
 
-  const TestProfilePage({
-    super.key, 
-    required this.username, 
-    required this.avatarIndex, 
-    required this.isFriend
-    }
-  );
+  const FriendProfilePage({
+    super.key,
+    required this.username,
+    required this.avatarIndex,
+    required this.isFriend,
+    required this.streakCount,
+    required this.achievements,
+  });
 
   @override
   Widget build(BuildContext context) {
@@ -155,29 +184,53 @@ class TestProfilePage extends StatelessWidget {
       appBar: AppBar(
         title: Text(username),
       ),
-      body: Center(
+      body: Padding(
+        padding: const EdgeInsets.all(16.0),
         child: Column(
-          mainAxisAlignment: MainAxisAlignment.center,
+          crossAxisAlignment: CrossAxisAlignment.start,
           children: [
-            CircleAvatar(
-              radius: 50,
-              backgroundImage: AssetImage(_avatarOptions[int.parse(avatarIndex)]),
+            Row(
+              children: [
+                CircleAvatar(
+                  radius: 40,
+                  backgroundImage: AssetImage(_avatarOptions[int.parse(avatarIndex)]),
+                ),
+                const SizedBox(width: 16),
+                Expanded(
+                  child: Column(
+                    crossAxisAlignment: CrossAxisAlignment.start,
+                    children: [
+                      Text(
+                        username,
+                        style: const TextStyle(fontSize: 20, fontWeight: FontWeight.bold),
+                      ),
+                    ],
+                  ),
+                ),
+                if (!isFriend)
+                  ElevatedButton(
+                    onPressed: () {
+                      ScaffoldMessenger.of(context).showSnackBar(
+                        const SnackBar(content: Text('Friend request sent.')),
+                      );
+                      Navigator.pop(context);
+                    },
+                    child: const Text('Send Request'),
+                  ),
+              ],
             ),
-            const SizedBox(height: 16),
-            Text(username),
-            const SizedBox(height: 16),
-            Text(isFriend ? 'You are friends.' : 'Send them a friend request.'),
-            const SizedBox(height: 16),
-            if (!isFriend)
-              ElevatedButton(
-                onPressed: () {
-                  ScaffoldMessenger.of(context).showSnackBar(
-                    const SnackBar(content: Text('Friend request sent.')),
-                  );
-                  Navigator.pop(context);
-                },
-                child: const Text('Send Friend Request.'),
-              ),
+            const SizedBox(height: 24),
+            const Text('Streak', style: TextStyle(fontSize: 18, fontWeight: FontWeight.bold)),
+            Text('$streakCount days', style: const TextStyle(fontSize: 16)),
+            const SizedBox(height: 24),
+            const Text('Achievements', style: TextStyle(fontSize: 18, fontWeight: FontWeight.bold)),
+            if (achievements.isNotEmpty)
+              Wrap(
+                spacing: 8.0,
+                children: achievements.map((achievement) => Chip(label: Text(achievement))).toList(),
+              )
+            else
+              const Text('No achievements yet.'),
           ],
         ),
       ),
