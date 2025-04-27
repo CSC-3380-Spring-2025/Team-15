@@ -3,12 +3,15 @@ import 'package:firebase_core/firebase_core.dart';
 import 'package:flutter/material.dart';
 import 'package:cloud_firestore/cloud_firestore.dart';
 import 'package:firebase_auth/firebase_auth.dart';
+
 import 'pages/profile.dart';
 import 'pages/relax.dart';
 import 'pages/shop.dart';
 import 'pages/user_login.dart';
 import 'pages/home.dart';
 import 'pages/friends.dart';
+
+import 'package:fortis/globals.dart';
 
 void main() async {
   WidgetsFlutterBinding.ensureInitialized();
@@ -21,9 +24,20 @@ class MyApp extends StatelessWidget {
 
   @override
   Widget build(BuildContext context) {
-    return MaterialApp(
-      debugShowCheckedModeBanner: false,
-      home: const LoginPage(),
+
+    return ValueListenableBuilder<Color>(
+      valueListenable: globalBgColor,
+      builder: (context, bgColor, _) {
+        return MaterialApp(
+          debugShowCheckedModeBanner: false,
+          theme: ThemeData(
+    
+            scaffoldBackgroundColor: bgColor,
+            appBarTheme: AppBarTheme(backgroundColor: bgColor),
+          ),
+          home: const LoginPage(),
+        );
+      },
     );
   }
 }
@@ -107,10 +121,6 @@ class _MainScreenState extends State<MainScreen> {
     }
   }
 
-  int get dailyPoints => todayChallenges
-      .where((c) => c["completed"])
-      .fold<int>(0, (sum, c) => sum + (c["points"] as int));
-
   void toggleChallenge(int index) async {
     final user = _auth.currentUser;
     if (user == null) return;
@@ -153,9 +163,7 @@ class _MainScreenState extends State<MainScreen> {
       today = selectedDay;
       _isLoading = true;
     });
-
     await _loadChallengesForDate(selectedDay);
-
     setState(() {
       _isLoading = false;
     });

@@ -1,4 +1,7 @@
 import 'package:flutter/material.dart';
+import 'package:fortis/globals.dart';
+
+
 
 void main() {
   runApp(const MyApp());
@@ -20,62 +23,58 @@ class ShopPage extends StatelessWidget {
 
   @override
   Widget build(BuildContext context) {
-    return Scaffold(
-      appBar: AppBar(
-        title: const Text('Shop', style: TextStyle(fontSize: 30, fontWeight: FontWeight.bold)),
-        actions: [
-          Row(
-            children: [
-              const Icon(Icons.monetization_on, color: Colors.amber),
-              const SizedBox(width: 5),
-              const Text('# Coins', style: TextStyle(fontSize: 18)), // User coin count variable goes here
-              const SizedBox(width: 15),
-
-              const Icon(Icons.notifications, color: Colors.grey), // Notifications placeholder icon
-              const Text('      ')
-            ],
-
-          )
-          
-        ],
-      ),
-      
-      body: ListView(
-        padding: const EdgeInsets.all(15.0),
-        children: [
-          _headerTitle('Featured'),
-          _itemLong('featured name', 'description', 'PRICE coins'),
-          
-          _headerTitle('Themes'),
-          Row(
-            children: [
-              Expanded(child: _itemTheme('theme name', 'PRICE coins', Colors.blue)),
-              const SizedBox(width: 15),
-              Expanded(child: _itemTheme('theme name', 'PRICE coins', Colors.orange)),
-            ],
+    return ValueListenableBuilder<Color>(
+      valueListenable: globalBgColor,
+      builder: (context, bgColor, _) {
+        return Scaffold(
+          appBar: AppBar(
+            backgroundColor: bgColor,
+            title: const Text(
+              'Shop',
+              style: TextStyle(fontSize: 30, fontWeight: FontWeight.bold),
+            ),
+            actions: [ /* … */ ],
           ),
-          // Repeat Row() for more themes
 
-          
-          _headerTitle('Premium Audio'),
-          _itemLong('audio name', 'description', 'PRICE coins'),
-          _itemLong('audio name', 'description', 'PRICE coins'), 
-          _itemLong('audio name', 'description', 'PRICE coins'),
-          // Repeat _itemLong() for more items
-        ],
-      ),
+         
+          body: Container(
+            color: bgColor,        
+            child: ListView(
+              padding: const EdgeInsets.all(15.0),
+              children: [
+                _headerTitle('Featured'),
+                _itemLong('featured name', 'description', 'PRICE coins'),
+                _headerTitle('Themes'),
+                Row(
+                  children: [
+                    Expanded(
+                      child: _itemTheme('Blue Theme', 'PRICE coins', Colors.blue),
+                    ),
+                    const SizedBox(width: 15),
+                    Expanded(
+                      child: _itemTheme('Orange Theme', 'PRICE coins', Colors.orange),
+                    ),
+                  ],
+                ),
+                _headerTitle('Premium Audio'),
+                _itemLong('audio 1', 'desc', 'PRICE coins'),
+                _itemLong('audio 2', 'desc', 'PRICE coins'),
+                _itemLong('audio 3', 'desc', 'PRICE coins'),
+              ],
+            ),
+          ),
+        );
+      },
     );
   }
 
-  Widget _headerTitle(String title) {
-    return Padding(
-      padding: const EdgeInsets.symmetric(vertical: 10.0),
-      child: Text(
-        title,
-        style: const TextStyle(fontSize: 20, fontWeight: FontWeight.bold),
-      ),
-    );
-  }
+  Widget _headerTitle(String title) => Padding(
+        padding: const EdgeInsets.symmetric(vertical: 10.0),
+        child: Text(
+          title,
+          style: const TextStyle(fontSize: 20, fontWeight: FontWeight.bold),
+        ),
+      );
 
   Widget _itemLong(String title, String description, String price) {
     return Card(
@@ -109,33 +108,32 @@ class ShopPage extends StatelessWidget {
     );
   }
 
-  Widget _itemTheme(String title, String price, Color color) {
-    return Card(
-      elevation: 3,
-      color: Colors.grey[300],
-      shape: RoundedRectangleBorder(borderRadius: BorderRadius.circular(15)),
-      child: Column(
-        children: [
-          Container(
-            height: 100,
-            color: color, // Preview theme color
-          ),
-          Padding(
-            padding: const EdgeInsets.all(8.0),
-            child: Column(
-              children: [
-                Text(title, style: const TextStyle(fontSize: 18, fontWeight: FontWeight.bold)),
-                const SizedBox(height: 4),
-                Text(price, style: const TextStyle(color: Colors.blue)),
-                ElevatedButton(
-                  onPressed: () {}, // Add purchase mechanic 
-                  child: const Text('Buy'),
-                ),
-              ],
+  Widget _itemTheme(String title, String price, Color color) => Card(
+        elevation: 3,
+        color: Colors.grey[300],
+        shape: RoundedRectangleBorder(borderRadius: BorderRadius.circular(15)),
+        child: Column(
+          children: [
+            Container(height: 100, color: color),
+            Padding(
+              padding: const EdgeInsets.all(8.0),
+              child: Column(
+                children: [
+                  Text(title,
+                      style: const TextStyle(
+                          fontSize: 18, fontWeight: FontWeight.bold)),
+                  const SizedBox(height: 4),
+                  Text(price, style: const TextStyle(color: Colors.blue)),
+                  ElevatedButton(
+                    onPressed: () {
+                      globalBgColor.value = color;
+                    },
+                    child: const Text('Buy'),
+                  ),
+                ],
+              ),
             ),
-          ),
-        ],
-      ),
-    );
-  }
+          ],
+        ),
+      );
 }
