@@ -50,6 +50,8 @@ class _MainScreenState extends State<MainScreen> {
 
   int _totalPoints = 0;
   bool _isLoading = true;
+  Map<DateTime, bool> completedDays = {};
+  int _currentStreak = 0; // 🔥 Track streak
 
   @override
   void initState() {
@@ -60,6 +62,7 @@ class _MainScreenState extends State<MainScreen> {
   Future<void> _loadData() async {
     await _loadTotalPoints();
     await _loadChallengesForDate(today);
+    _calculateStreak(); // 🔥 Recalculate streak after loading
 
     setState(() {
       _isLoading = false;
@@ -87,18 +90,24 @@ class _MainScreenState extends State<MainScreen> {
       final user = _auth.currentUser;
       if (user != null) {
         String dateString = "${date.year}-${date.month}-${date.day}";
-        final doc =
-            await _firestore
-                .collection('users')
-                .doc(user.uid)
-                .collection('dailyChallenges')
-                .doc(dateString)
-                .get();
+        final doc = await _firestore
+            .collection('users')
+            .doc(user.uid)
+            .collection('dailyChallenges')
+            .doc(dateString)
+            .get();
 
         if (doc.exists && doc.data() != null) {
           List<dynamic> challenges = doc.data()?['challenges'] ?? [];
+          bool dayCompleted = doc.data()?['dayCompleted'] ?? false;
+          DateTime normalizedDate = DateTime(date.year, date.month, date.day);
+
           setState(() {
             todayChallenges = List<Map<String, dynamic>>.from(challenges);
+            completedDays = {
+              ...completedDays,
+              normalizedDate: dayCompleted,
+            };
           });
         }
       }
@@ -106,10 +115,6 @@ class _MainScreenState extends State<MainScreen> {
       print('Error loading challenges: $e');
     }
   }
-
-  int get dailyPoints => todayChallenges
-      .where((c) => c["completed"])
-      .fold<int>(0, (sum, c) => sum + (c["points"] as int));
 
   void toggleChallenge(int index) async {
     final user = _auth.currentUser;
@@ -123,27 +128,41 @@ class _MainScreenState extends State<MainScreen> {
     });
 
     int pointChange = wasCompleted ? -challengePoints : challengePoints;
-    setState(() {
-      _totalPoints += pointChange;
-    });
 
     try {
       String dateString = "${today.year}-${today.month}-${today.day}";
+      bool allCompleted = todayChallenges.every((c) => c["completed"]);
+      DateTime normalizedToday = DateTime(today.year, today.month, today.day);
+
       await _firestore
           .collection('users')
           .doc(user.uid)
           .collection('dailyChallenges')
           .doc(dateString)
-          .set({'date': dateString, 'challenges': todayChallenges});
+          .set({
+            'date': dateString,
+            'challenges': todayChallenges,
+            'dayCompleted': allCompleted,
+          });
 
       await _firestore.collection('users').doc(user.uid).set({
-        'points': _totalPoints,
+        'points': _totalPoints + pointChange,
       }, SetOptions(merge: true));
+
+      setState(() {
+        _totalPoints += pointChange;
+        completedDays = {
+          ...completedDays,
+          normalizedToday: allCompleted,
+        };
+      });
+
+      _calculateStreak(); // 🔥 Recalculate streak after toggling
+
     } catch (e) {
       print('Error saving data: $e');
       setState(() {
         todayChallenges[index]["completed"] = wasCompleted;
-        _totalPoints -= pointChange;
       });
     }
   }
@@ -161,18 +180,41 @@ class _MainScreenState extends State<MainScreen> {
     });
   }
 
+  void _calculateStreak() {
+    int streak = 0;
+    DateTime day = DateTime.now();
+
+    while (true) {
+      DateTime normalizedDay = DateTime(day.year, day.month, day.day);
+      bool? completed = completedDays[normalizedDay];
+
+      if (completed == true) {
+        streak += 1;
+        day = day.subtract(const Duration(days: 1));
+      } else {
+        break;
+      }
+    }
+
+    setState(() {
+      _currentStreak = streak;
+    });
+  }
+
   @override
   Widget build(BuildContext context) {
     final List<Widget> pages = [
       _isLoading
           ? const Center(child: CircularProgressIndicator())
           : HomePage(
-            today: today,
-            challenges: todayChallenges,
-            onToggle: toggleChallenge,
-            onDaySelected: changeDay,
-            points: _totalPoints,
-          ),
+              today: today,
+              challenges: todayChallenges,
+              onToggle: toggleChallenge,
+              onDaySelected: changeDay,
+              points: _totalPoints,
+              completedDays: completedDays,
+              streak: _currentStreak, // 🔥 Pass streak
+            ),
       const RelaxPage(),
       const ShopPage(),
       const FriendsPage(),
@@ -196,10 +238,7 @@ class _MainScreenState extends State<MainScreen> {
         items: const [
           BottomNavigationBarItem(icon: Icon(Icons.home), label: 'Home'),
           BottomNavigationBarItem(icon: Icon(Icons.tag_faces), label: 'Relax'),
-          BottomNavigationBarItem(
-            icon: Icon(Icons.shopping_bag_outlined),
-            label: 'Shop',
-          ),
+          BottomNavigationBarItem(icon: Icon(Icons.shopping_bag_outlined), label: 'Shop'),
           BottomNavigationBarItem(icon: Icon(Icons.group), label: 'Friends'),
           BottomNavigationBarItem(icon: Icon(Icons.person), label: 'Profile'),
         ],
