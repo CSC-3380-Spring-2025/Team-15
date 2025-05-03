@@ -5,6 +5,8 @@ import 'package:fortis/pages/pop_up_pages/deep-breathing.dart';
 import 'pop_up_pages/breathing_exercise_page.dart';
 import 'pop_up_pages/beach_waves.dart';
 import 'pop_up_pages/grounding_exercise.dart';
+// Import journal page
+import 'package:fortis/pages/my_journals_page.dart'; // Adjust the import path as necessary
 
 // Convert to StatefulWidget to properly handle state changes
 class RelaxPage extends StatefulWidget {
@@ -60,6 +62,69 @@ class _RelaxPageState extends State<RelaxPage> {
                 color: Colors.black54,
               ),
             ),
+            const SizedBox(height: 24),
+
+            // Journal Section - NEW ADDITION
+            GestureDetector(
+              onTap: () {
+                Navigator.push(
+                  context,
+                  MaterialPageRoute(
+                    builder: (context) => const MyJournalsPage(),
+                  ),
+                );
+              },
+              child: Container(
+                padding: const EdgeInsets.all(16),
+                decoration: BoxDecoration(
+                  color: Colors.amber.shade50,
+                  borderRadius: BorderRadius.circular(12),
+                  border: Border.all(color: Colors.amber.shade200, width: 1),
+                ),
+                child: Row(
+                  children: [
+                    Container(
+                      padding: const EdgeInsets.all(12),
+                      decoration: BoxDecoration(
+                        color: Colors.amber.shade100,
+                        borderRadius: BorderRadius.circular(12),
+                      ),
+                      child: const Icon(Icons.book, color: Colors.amber),
+                    ),
+                    const SizedBox(width: 16),
+                    const Expanded(
+                      child: Column(
+                        crossAxisAlignment: CrossAxisAlignment.start,
+                        children: [
+                          Text(
+                            'Journal Your Thoughts',
+                            style: TextStyle(
+                              fontFamily: 'Poppins',
+                              fontWeight: FontWeight.w600,
+                              fontSize: 16,
+                            ),
+                          ),
+                          Text(
+                            'Express your feelings and track your progress',
+                            style: TextStyle(
+                              fontFamily: 'Poppins',
+                              color: Colors.black54,
+                              fontSize: 14,
+                            ),
+                          ),
+                        ],
+                      ),
+                    ),
+                    const Icon(
+                      Icons.arrow_forward_ios,
+                      color: Colors.amber,
+                      size: 18,
+                    ),
+                  ],
+                ),
+              ),
+            ),
+
             const SizedBox(height: 24),
 
             // Anxiety Relief Section

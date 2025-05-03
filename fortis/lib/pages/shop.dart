@@ -9,9 +9,7 @@ class MyApp extends StatelessWidget {
 
   @override
   Widget build(BuildContext context) {
-    return MaterialApp(
-      home: ShopPage(),
-    );
+    return MaterialApp(home: ShopPage());
   }
 }
 
@@ -22,44 +20,54 @@ class ShopPage extends StatelessWidget {
   Widget build(BuildContext context) {
     return Scaffold(
       appBar: AppBar(
-        title: const Text('Shop', style: TextStyle(fontSize: 30, fontWeight: FontWeight.bold)),
+        title: const Text(
+          'Shop',
+          style: TextStyle(fontSize: 30, fontWeight: FontWeight.bold),
+        ),
         actions: [
           Row(
             children: [
               const Icon(Icons.monetization_on, color: Colors.amber),
               const SizedBox(width: 5),
-              const Text('# Coins', style: TextStyle(fontSize: 18)), // User coin count variable goes here
+              const Text(
+                '# Coins',
+                style: TextStyle(fontSize: 18),
+              ), // User coin count variable goes here
               const SizedBox(width: 15),
 
-              const Icon(Icons.notifications, color: Colors.grey), // Notifications placeholder icon
-              const Text('      ')
+              const Icon(
+                Icons.notifications,
+                color: Colors.grey,
+              ), // Notifications placeholder icon
+              const Text('      '),
             ],
-
-          )
-          
+          ),
         ],
       ),
-      
+
       body: ListView(
         padding: const EdgeInsets.all(15.0),
         children: [
           _headerTitle('Featured'),
           _itemLong('featured name', 'description', 'PRICE coins'),
-          
+
           _headerTitle('Themes'),
           Row(
             children: [
-              Expanded(child: _itemTheme('theme name', 'PRICE coins', Colors.blue)),
+              Expanded(
+                child: _itemTheme('theme name', 'PRICE coins', Colors.blue),
+              ),
               const SizedBox(width: 15),
-              Expanded(child: _itemTheme('theme name', 'PRICE coins', Colors.orange)),
+              Expanded(
+                child: _itemTheme('theme name', 'PRICE coins', Colors.orange),
+              ),
             ],
           ),
-          // Repeat Row() for more themes
 
-          
+          // Repeat Row() for more themes
           _headerTitle('Premium Audio'),
           _itemLong('audio name', 'description', 'PRICE coins'),
-          _itemLong('audio name', 'description', 'PRICE coins'), 
+          _itemLong('audio name', 'description', 'PRICE coins'),
           _itemLong('audio name', 'description', 'PRICE coins'),
           // Repeat _itemLong() for more items
         ],
@@ -85,22 +93,34 @@ class ShopPage extends StatelessWidget {
       child: ListTile(
         contentPadding: const EdgeInsets.all(15),
         leading: const Icon(Icons.music_note, size: 50, color: Colors.green),
-        title: Text(title, style: const TextStyle(fontSize: 18, fontWeight: FontWeight.bold)),
+        title: Text(
+          title,
+          style: const TextStyle(fontSize: 18, fontWeight: FontWeight.bold),
+        ),
         subtitle: Text(description),
         trailing: Column(
           mainAxisAlignment: MainAxisAlignment.center,
           children: [
-            Text(price, style: const TextStyle(color: Colors.blue, fontWeight: FontWeight.bold)),
+            Text(
+              price,
+              style: const TextStyle(
+                color: Colors.blue,
+                fontWeight: FontWeight.bold,
+              ),
+            ),
             const SizedBox(height: 4),
             SizedBox(
-            height: 30,
-            child: ElevatedButton(
-              onPressed: () {}, // Add purchase mechanic
-              style: ElevatedButton.styleFrom(
-                padding: const EdgeInsets.symmetric(horizontal: 10, vertical: 5), 
-                textStyle: const TextStyle(fontSize: 13),
-              ),
-              child: const Text('Buy'),
+              height: 30,
+              child: ElevatedButton(
+                onPressed: () {}, // Add purchase mechanic
+                style: ElevatedButton.styleFrom(
+                  padding: const EdgeInsets.symmetric(
+                    horizontal: 10,
+                    vertical: 5,
+                  ),
+                  textStyle: const TextStyle(fontSize: 13),
+                ),
+                child: const Text('Buy'),
               ),
             ),
           ],
@@ -124,11 +144,17 @@ class ShopPage extends StatelessWidget {
             padding: const EdgeInsets.all(8.0),
             child: Column(
               children: [
-                Text(title, style: const TextStyle(fontSize: 18, fontWeight: FontWeight.bold)),
+                Text(
+                  title,
+                  style: const TextStyle(
+                    fontSize: 18,
+                    fontWeight: FontWeight.bold,
+                  ),
+                ),
                 const SizedBox(height: 4),
                 Text(price, style: const TextStyle(color: Colors.blue)),
                 ElevatedButton(
-                  onPressed: () {}, // Add purchase mechanic 
+                  onPressed: () {}, // Add purchase mechanic
                   child: const Text('Buy'),
                 ),
               ],
