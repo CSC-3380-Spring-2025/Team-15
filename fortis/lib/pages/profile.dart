@@ -55,12 +55,12 @@ class _ProfilePageState extends State<ProfilePage> {
     if (_currentUser == null) return;
     setState(() => _isLoading = true);
     try {
-      DocumentSnapshot userDoc = await _firestore
+      final userDoc = await _firestore
           .collection('users')
           .doc(_currentUser!.uid)
           .get();
       if (userDoc.exists) {
-        Map<String, dynamic> userData = userDoc.data() as Map<String, dynamic>;
+        final userData = userDoc.data() as Map<String, dynamic>;
         _selectedAvatarIndex = userData['avatarIndex'] ?? _selectedAvatarIndex;
         firstName = userData['firstName'] ?? firstName;
         lastName = userData['lastName'] ?? lastName;
@@ -94,7 +94,7 @@ class _ProfilePageState extends State<ProfilePage> {
     } catch (e) {
       debugPrint('Error updating avatar: $e');
       ScaffoldMessenger.of(context).showSnackBar(
-        SnackBar(content: Text('Failed to update avatar: \$e')),
+        SnackBar(content: Text('Failed to update avatar: $e')),
       );
     } finally {
       setState(() => _isLoading = false);
@@ -190,9 +190,9 @@ class _ProfilePageState extends State<ProfilePage> {
                   ),
                   const Divider(),
 
-                  // Achievements
+                  // Achievements in a row
                   Padding(
-                    padding: const EdgeInsets.symmetric(horizontal: 16),
+                    padding: const EdgeInsets.symmetric(horizontal: 16, vertical: 8),
                     child: Column(
                       crossAxisAlignment: CrossAxisAlignment.start,
                       children: [
@@ -204,47 +204,40 @@ class _ProfilePageState extends State<ProfilePage> {
                           ),
                         ),
                         const SizedBox(height: 8),
-                        Card(
-                          child: Padding(
-                            padding: const EdgeInsets.all(12),
-                            child: Column(
-                              children: [
-                                ListTile(
-                                  leading: const Icon(Icons.cake),
-                                  title: const Text('Account Created'),
-                                  subtitle: Text(
-                                    _accountCreationDate != null
-                                        ? '${_accountCreationDate!.toLocal()}'.split(' ')[0]
-                                        : 'N/A',
-                                  ),
-                                ),
-                                ListTile(
-                                  leading: const Icon(Icons.calendar_today),
-                                  title: const Text('Days Signed In'),
-                                  trailing: Text('$_daysSignedIn'),
-                                ),
-                                ListTile(
-                                  leading: const Icon(Icons.check_circle_outline),
-                                  title: const Text('Challenges Completed'),
-                                  trailing: Text('$_challengesCompleted'),
-                                ),
-                              ],
+                        Row(
+                          mainAxisAlignment: MainAxisAlignment.spaceAround,
+                          children: [
+                            _buildAchievementItem(
+                              icon: Icons.cake,
+                              label: 'Joined',
+                              value: _accountCreationDate != null
+                                  ? '${_accountCreationDate!.toLocal()}'.split(' ')[0]
+                                  : 'N/A',
                             ),
-                          ),
+                            _buildAchievementItem(
+                              icon: Icons.calendar_today,
+                              label: 'Days Signed In',
+                              value: '$_daysSignedIn',
+                            ),
+                            _buildAchievementItem(
+                              icon: Icons.check_circle_outline,
+                              label: 'Challenges',
+                              value: '$_challengesCompleted',
+                            ),
+                          ],
                         ),
                       ],
                     ),
                   ),
                   const Divider(),
 
-                  // Menu
+                  // Menu items
                   _buildMenuItem(
                     icon: Icons.book_outlined,
                     title: 'My Journals',
                     onTap: () => Navigator.push(
                       context,
-                      MaterialPageRoute(
-                          builder: (_) => const MyJournalsPage()),
+                      MaterialPageRoute(builder: (_) => const MyJournalsPage()),
                     ),
                   ),
                   _buildMenuItem(
@@ -252,8 +245,7 @@ class _ProfilePageState extends State<ProfilePage> {
                     title: 'Profile',
                     onTap: () => Navigator.push(
                       context,
-                      MaterialPageRoute(
-                          builder: (_) => const ProfileDetailsPage()),
+                      MaterialPageRoute(builder: (_) => const ProfileDetailsPage()),
                     ),
                   ),
                   _buildMenuItem(
@@ -261,8 +253,7 @@ class _ProfilePageState extends State<ProfilePage> {
                     title: 'Settings',
                     onTap: () => Navigator.push(
                       context,
-                      MaterialPageRoute(
-                          builder: (_) => const SettingsPage()),
+                      MaterialPageRoute(builder: (_) => const SettingsPage()),
                     ),
                   ),
                   _buildMenuItem(
@@ -270,8 +261,7 @@ class _ProfilePageState extends State<ProfilePage> {
                     title: 'Notification',
                     onTap: () => Navigator.push(
                       context,
-                      MaterialPageRoute(
-                          builder: (_) => const NotificationsPage()),
+                      MaterialPageRoute(builder: (_) => const NotificationsPage()),
                     ),
                   ),
                   _buildMenuItem(
@@ -279,8 +269,7 @@ class _ProfilePageState extends State<ProfilePage> {
                     title: 'Help Center',
                     onTap: () => Navigator.push(
                       context,
-                      MaterialPageRoute(
-                          builder: (_) => const HelpCenterPage()),
+                      MaterialPageRoute(builder: (_) => const HelpCenterPage()),
                     ),
                   ),
                   const Divider(),
@@ -291,8 +280,7 @@ class _ProfilePageState extends State<ProfilePage> {
                     onTap: () async {
                       await _auth.signOut();
                       Navigator.of(context).pushAndRemoveUntil(
-                        MaterialPageRoute(
-                            builder: (_) => const LoginPage()),
+                        MaterialPageRoute(builder: (_) => const LoginPage()),
                         (route) => false,
                       );
                     },
@@ -301,6 +289,28 @@ class _ProfilePageState extends State<ProfilePage> {
                 ],
               ),
             ),
+    );
+  }
+
+  Widget _buildAchievementItem({
+    required IconData icon,
+    required String label,
+    required String value,
+  }) {
+    return Column(
+      children: [
+        Icon(icon, size: 28, color: Colors.blue),
+        const SizedBox(height: 4),
+        Text(
+          value,
+          style: const TextStyle(fontSize: 14, fontWeight: FontWeight.bold),
+        ),
+        const SizedBox(height: 2),
+        Text(
+          label,
+          style: const TextStyle(fontSize: 12, color: Colors.grey),
+        ),
+      ],
     );
   }
 
@@ -318,7 +328,6 @@ class _ProfilePageState extends State<ProfilePage> {
     );
   }
 }
-
   
 
 
