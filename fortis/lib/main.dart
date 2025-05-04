@@ -43,7 +43,7 @@ class _MainScreenState extends State<MainScreen> {
 
   List<Map<String, dynamic>> todayChallenges = [
     {"name": "🧘 Meditate", "completed": false, "points": 10},
-    {"name": "✍ Journal", "completed": false, "points": 10},
+    {"name": "✍ Journal Entry", "completed": false, "points": 10, "type": "journal"},
     {"name": "🤔 Reflect", "completed": false, "points": 10},
     {"name": "💪 Physical Exercise", "completed": false, "points": 10},
   ];
@@ -51,7 +51,7 @@ class _MainScreenState extends State<MainScreen> {
   int _totalPoints = 0;
   bool _isLoading = true;
   Map<DateTime, bool> completedDays = {};
-  int _currentStreak = 0; // 🔥 Track streak
+  int _currentStreak = 0; //Track streak
 
   @override
   void initState() {
@@ -62,7 +62,7 @@ class _MainScreenState extends State<MainScreen> {
   Future<void> _loadData() async {
     await _loadTotalPoints();
     await _loadChallengesForDate(today);
-    _calculateStreak(); // 🔥 Recalculate streak after loading
+    _calculateStreak(); //Recalculate streak after loading
 
     setState(() {
       _isLoading = false;
@@ -157,7 +157,7 @@ class _MainScreenState extends State<MainScreen> {
         };
       });
 
-      _calculateStreak(); // 🔥 Recalculate streak after toggling
+      _calculateStreak(); //Recalculate streak after toggling
 
     } catch (e) {
       print('Error saving data: $e');
@@ -213,7 +213,7 @@ class _MainScreenState extends State<MainScreen> {
               onDaySelected: changeDay,
               points: _totalPoints,
               completedDays: completedDays,
-              streak: _currentStreak, // 🔥 Pass streak
+              streak: _currentStreak, //Pass streak
             ),
       const RelaxPage(),
       const ShopPage(),

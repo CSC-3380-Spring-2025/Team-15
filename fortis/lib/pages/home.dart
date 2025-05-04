@@ -113,35 +113,30 @@ class HomePage extends StatelessWidget {
               selectedBuilder: (context, day, focusedDay) {
                 final normalizedDay = DateTime(day.year, day.month, day.day);
                 final isCompleted = completedDays[normalizedDay] ?? false;
+                final isToday = isSameDay(day, DateTime.now());
 
+                Color backgroundColor;
                 if (isCompleted) {
-                  return Container(
-                    margin: const EdgeInsets.all(6.0),
-                    alignment: Alignment.center,
-                    decoration: BoxDecoration(
-                      color: Colors.green.shade700,
-                      shape: BoxShape.circle,
-                    ),
-                    child: Text(
-                      '${day.day}',
-                      style: const TextStyle(
-                        color: Colors.white,
-                        fontWeight: FontWeight.bold,
-                      ),
-                    ),
-                  );
+                  backgroundColor = Colors.green.shade700;
+                } else if (isToday) {
+                  backgroundColor = Colors.blueAccent;
+                } else {
+                  backgroundColor = Colors.orangeAccent;
                 }
 
                 return Container(
                   margin: const EdgeInsets.all(6.0),
                   alignment: Alignment.center,
                   decoration: BoxDecoration(
-                    color: Colors.orangeAccent,
+                    color: backgroundColor,
                     shape: BoxShape.circle,
                   ),
                   child: Text(
                     '${day.day}',
-                    style: const TextStyle(color: Colors.white),
+                    style: const TextStyle(
+                      color: Colors.white,
+                      fontWeight: FontWeight.bold,
+                    ),
                   ),
                 );
               },
@@ -191,7 +186,16 @@ class HomePage extends StatelessWidget {
                     ),
                     onTap: () {
                       if (isToday) {
-                        onToggle(index);
+                        if (challenge['type'] == 'journal') {
+                          ScaffoldMessenger.of(context).showSnackBar(
+                            const SnackBar(
+                              content: Text("This challenge is completed by writing a journal entry."),
+                              duration: Duration(seconds: 2),
+                            ),
+                          );
+                        } else {
+                          onToggle(index);
+                        }
                       } else {
                         ScaffoldMessenger.of(context).showSnackBar(
                           const SnackBar(

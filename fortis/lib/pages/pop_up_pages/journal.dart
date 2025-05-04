@@ -16,7 +16,6 @@ class JournalEntry {
   });
 }
 
-// MyJournalsPage displays a list of journal entries and navigates to a form for creating a new entry.
 class MyJournalsPage extends StatefulWidget {
   const MyJournalsPage({super.key});
 
@@ -57,28 +56,15 @@ class _MyJournalsPageState extends State<MyJournalsPage> {
       context: context,
       builder: (BuildContext context) {
         return AlertDialog(
-          title: const Text(
-            'Sign In Required',
-            style: TextStyle(
-              fontFamily: 'Poppins',
-              fontWeight: FontWeight.bold,
-            ),
-          ),
-          content: const Text(
-            'You need to sign in to create or view journal entries.',
-            style: TextStyle(fontFamily: 'Poppins'),
-          ),
-          actions: <Widget>[
+          title: const Text('Sign In Required', style: TextStyle(fontFamily: 'Poppins', fontWeight: FontWeight.bold)),
+          content: const Text('You need to sign in to create or view journal entries.', style: TextStyle(fontFamily: 'Poppins')),
+          actions: [
             TextButton(
               child: const Text('OK', style: TextStyle(fontFamily: 'Poppins')),
-              onPressed: () {
-                Navigator.of(context).pop();
-              },
+              onPressed: () => Navigator.of(context).pop(),
             ),
           ],
-          shape: RoundedRectangleBorder(
-            borderRadius: BorderRadius.circular(15),
-          ),
+          shape: RoundedRectangleBorder(borderRadius: BorderRadius.circular(15)),
         );
       },
     );
@@ -97,33 +83,16 @@ class _MyJournalsPageState extends State<MyJournalsPage> {
 
     if (user == null) {
       return Scaffold(
-        appBar: AppBar(
-          title: const Text(
-            'My Journals',
-            style: TextStyle(
-              fontFamily: 'Poppins',
-              fontWeight: FontWeight.w600,
-            ),
-          ),
-        ),
+        appBar: AppBar(title: const Text('My Journals', style: TextStyle(fontFamily: 'Poppins', fontWeight: FontWeight.w600))),
         body: Center(
           child: Column(
             mainAxisAlignment: MainAxisAlignment.center,
             children: [
-              const Text(
-                'Please sign in to view your journals',
-                style: TextStyle(fontFamily: 'Poppins', fontSize: 16),
-              ),
+              const Text('Please sign in to view your journals', style: TextStyle(fontFamily: 'Poppins', fontSize: 16)),
               const SizedBox(height: 20),
               ElevatedButton(
-                onPressed: () {
-                  // Navigate to sign in page or show sign in dialog
-                  // This depends on your app's authentication flow
-                },
-                child: const Text(
-                  'Sign In',
-                  style: TextStyle(fontFamily: 'Poppins'),
-                ),
+                onPressed: () {}, // Implement sign-in logic
+                child: const Text('Sign In', style: TextStyle(fontFamily: 'Poppins')),
               ),
             ],
           ),
@@ -133,16 +102,9 @@ class _MyJournalsPageState extends State<MyJournalsPage> {
 
     return Scaffold(
       appBar: AppBar(
-        title: const Text(
-          'My Journals',
-          style: TextStyle(fontFamily: 'Poppins', fontWeight: FontWeight.w600),
-        ),
+        title: const Text('My Journals', style: TextStyle(fontFamily: 'Poppins', fontWeight: FontWeight.w600)),
         actions: [
-          IconButton(
-            icon: const Icon(Icons.add),
-            tooltip: 'New Entry',
-            onPressed: _onNewEntry,
-          ),
+          IconButton(icon: const Icon(Icons.add), tooltip: 'New Entry', onPressed: _onNewEntry),
         ],
       ),
       body: Padding(
@@ -158,25 +120,20 @@ class _MyJournalsPageState extends State<MyJournalsPage> {
                 child: Text(
                   'No journal entries yet.\nTap the "+" button to create one.',
                   textAlign: TextAlign.center,
-                  style: Theme.of(
-                    context,
-                  ).textTheme.titleMedium?.copyWith(fontFamily: 'Poppins'),
+                  style: Theme.of(context).textTheme.titleMedium?.copyWith(fontFamily: 'Poppins'),
                 ),
               );
             }
 
-            List<JournalEntry> entries =
-                snapshot.data!.docs.map((doc) {
-                  final data = doc.data() as Map<String, dynamic>;
-                  return JournalEntry(
-                    id: doc.id,
-                    title: data['title'] as String? ?? '',
-                    content: data['content'] as String? ?? '',
-                    createdAt:
-                        (data['createdAt'] as Timestamp?)?.toDate() ??
-                        DateTime.now(),
-                  );
-                }).toList();
+            List<JournalEntry> entries = snapshot.data!.docs.map((doc) {
+              final data = doc.data() as Map<String, dynamic>;
+              return JournalEntry(
+                id: doc.id,
+                title: data['title'] ?? '',
+                content: data['content'] ?? '',
+                createdAt: (data['createdAt'] as Timestamp?)?.toDate() ?? DateTime.now(),
+              );
+            }).toList();
 
             return ListView.separated(
               itemCount: entries.length,
@@ -184,17 +141,8 @@ class _MyJournalsPageState extends State<MyJournalsPage> {
               itemBuilder: (context, index) {
                 final entry = entries[index];
                 return ListTile(
-                  title: Text(
-                    entry.title,
-                    style: const TextStyle(
-                      fontFamily: 'Poppins',
-                      fontWeight: FontWeight.w500,
-                    ),
-                  ),
-                  subtitle: Text(
-                    '${entry.createdAt.day}/${entry.createdAt.month}/${entry.createdAt.year}',
-                    style: const TextStyle(fontFamily: 'Poppins'),
-                  ),
+                  title: Text(entry.title, style: const TextStyle(fontFamily: 'Poppins', fontWeight: FontWeight.w500)),
+                  subtitle: Text('${entry.createdAt.day}/${entry.createdAt.month}/${entry.createdAt.year}', style: const TextStyle(fontFamily: 'Poppins')),
                   trailing: const Icon(Icons.chevron_right),
                   onTap: () => _onViewEntry(entry),
                 );
@@ -212,7 +160,6 @@ class _MyJournalsPageState extends State<MyJournalsPage> {
   }
 }
 
-/// NewJournalEntryPage creates a form for a new journal entry
 class NewJournalEntryPage extends StatefulWidget {
   const NewJournalEntryPage({super.key});
 
@@ -231,98 +178,99 @@ class _NewJournalEntryPageState extends State<NewJournalEntryPage> {
 
   Future<void> _saveEntry() async {
     if (_formKey.currentState!.validate()) {
-      setState(() {
-        _isSaving = true;
-      });
+      setState(() => _isSaving = true);
 
       final user = _auth.currentUser;
       if (user == null) {
-        setState(() {
-          _isSaving = false;
-        });
-        ScaffoldMessenger.of(context).showSnackBar(
-          const SnackBar(
-            content: Text('You need to be signed in to save entries'),
-          ),
-        );
+        setState(() => _isSaving = false);
+        ScaffoldMessenger.of(context).showSnackBar(const SnackBar(content: Text('You need to be signed in to save entries')));
         return;
       }
 
       try {
-        // Save the journal entry
-        await _firestore
-            .collection('users')
-            .doc(user.uid)
-            .collection('journalEntries')
-            .add({
-              'title': _titleController.text,
-              'content': _contentController.text,
-              'createdAt': FieldValue.serverTimestamp(),
-            });
+        await _firestore.collection('users').doc(user.uid).collection('journalEntries').add({
+          'title': _titleController.text,
+          'content': _contentController.text,
+          'createdAt': FieldValue.serverTimestamp(),
+        });
 
-        // Award points
-        final userDoc =
-            await _firestore.collection('users').doc(user.uid).get();
-        int currentPoints = 0;
+        final userDoc = await _firestore.collection('users').doc(user.uid).get();
+        int currentPoints = userDoc.exists ? (userDoc.data()?['points'] ?? 0) : 0;
 
-        if (userDoc.exists) {
-          currentPoints = userDoc.data()?['points'] ?? 0;
-        }
-
-        // Update points in Firestore
         await _firestore.collection('users').doc(user.uid).set({
           'points': currentPoints + pointsReward,
         }, SetOptions(merge: true));
 
-        // Record this activity in the user's history
-        String dateString =
-            "${DateTime.now().year}-${DateTime.now().month}-${DateTime.now().day}";
-        await _firestore
-            .collection('users')
-            .doc(user.uid)
-            .collection('activities')
-            .add({
-              'type': 'journal_entry',
-              'points': pointsReward,
-              'date': dateString,
-              'timestamp': FieldValue.serverTimestamp(),
-            });
+        final now = DateTime.now();
+        final dateString = "${now.year}-${now.month}-${now.day}";
+        await _firestore.collection('users').doc(user.uid).collection('activities').add({
+          'type': 'journal_entry',
+          'points': pointsReward,
+          'date': dateString,
+          'timestamp': FieldValue.serverTimestamp(),
+        });
 
-        ScaffoldMessenger.of(context).showSnackBar(
-          SnackBar(
-            content: Row(
-              children: [
-                const Icon(Icons.check_circle, color: Colors.white),
-                const SizedBox(width: 10),
-                Expanded(
-                  child: Column(
-                    crossAxisAlignment: CrossAxisAlignment.start,
-                    mainAxisSize: MainAxisSize.min,
-                    children: [
-                      const Text('Journal Entry Saved!'),
-                      Text(
-                        '+$pointsReward points earned',
-                        style: const TextStyle(fontSize: 12),
-                      ),
-                    ],
-                  ),
+        // Mark the journal challenge complete
+        try {
+          final challengesRef = _firestore
+              .collection('users')
+              .doc(user.uid)
+              .collection('dailyChallenges')
+              .doc(dateString);
+
+          final doc = await challengesRef.get();
+          if (doc.exists) {
+            List<dynamic> challenges = doc.data()?['challenges'] ?? [];
+            bool updated = false;
+
+            for (var challenge in challenges) {
+              if ((challenge['name'] as String).contains('Journal') || challenge['type'] == 'journal') {
+                if (!(challenge['completed'] as bool)) {
+                  challenge['completed'] = true;
+                  updated = true;
+                }
+              }
+            }
+
+            if (updated) {
+              bool allCompleted = challenges.every((c) => c['completed'] == true);
+              await challengesRef.set({
+                'challenges': challenges,
+                'dayCompleted': allCompleted,
+                'date': dateString,
+              });
+            }
+          }
+        } catch (e) {
+          print('Failed to update journal challenge: \$e');
+        }
+
+        ScaffoldMessenger.of(context).showSnackBar(SnackBar(
+          content: Row(
+            children: [
+              const Icon(Icons.check_circle, color: Colors.white),
+              const SizedBox(width: 10),
+              Expanded(
+                child: Column(
+                  crossAxisAlignment: CrossAxisAlignment.start,
+                  mainAxisSize: MainAxisSize.min,
+                  children: [
+                    const Text('Journal Entry Saved!'),
+                    Text('+$pointsReward points earned', style: const TextStyle(fontSize: 12)),
+                  ],
                 ),
-              ],
-            ),
-            duration: const Duration(seconds: 3),
-            backgroundColor: Colors.green,
+              ),
+            ],
           ),
-        );
+          duration: const Duration(seconds: 3),
+          backgroundColor: Colors.green,
+        ));
 
         Navigator.of(context).pop();
       } catch (e) {
-        ScaffoldMessenger.of(context).showSnackBar(
-          const SnackBar(content: Text('Error: Please try again')),
-        );
+        ScaffoldMessenger.of(context).showSnackBar(const SnackBar(content: Text('Error: Please try again')));
       } finally {
-        setState(() {
-          _isSaving = false;
-        });
+        setState(() => _isSaving = false);
       }
     }
   }
@@ -337,12 +285,7 @@ class _NewJournalEntryPageState extends State<NewJournalEntryPage> {
   @override
   Widget build(BuildContext context) {
     return Scaffold(
-      appBar: AppBar(
-        title: const Text(
-          'New Journal Entry',
-          style: TextStyle(fontFamily: 'Poppins', fontWeight: FontWeight.w600),
-        ),
-      ),
+      appBar: AppBar(title: const Text('New Journal Entry', style: TextStyle(fontFamily: 'Poppins', fontWeight: FontWeight.w600))),
       body: Padding(
         padding: const EdgeInsets.all(16.0),
         child: Form(
@@ -362,14 +305,7 @@ class _NewJournalEntryPageState extends State<NewJournalEntryPage> {
                   children: [
                     Icon(Icons.star, color: Colors.amber),
                     SizedBox(width: 8),
-                    Text(
-                      'Complete to earn 15 points',
-                      style: TextStyle(
-                        fontFamily: 'Poppins',
-                        fontSize: 14,
-                        color: Colors.blue,
-                      ),
-                    ),
+                    Text('Complete to earn 15 points', style: TextStyle(fontFamily: 'Poppins', fontSize: 14, color: Colors.blue)),
                   ],
                 ),
               ),
@@ -381,12 +317,7 @@ class _NewJournalEntryPageState extends State<NewJournalEntryPage> {
                   labelStyle: TextStyle(fontFamily: 'Poppins'),
                 ),
                 style: const TextStyle(fontFamily: 'Poppins'),
-                validator: (value) {
-                  if (value == null || value.trim().isEmpty) {
-                    return 'Please enter a title';
-                  }
-                  return null;
-                },
+                validator: (value) => (value == null || value.trim().isEmpty) ? 'Please enter a title' : null,
               ),
               const SizedBox(height: 16),
               Expanded(
@@ -402,31 +333,16 @@ class _NewJournalEntryPageState extends State<NewJournalEntryPage> {
                   maxLines: null,
                   expands: true,
                   textAlignVertical: TextAlignVertical.top,
-                  validator: (value) {
-                    if (value == null || value.trim().isEmpty) {
-                      return 'Please enter some content';
-                    }
-                    return null;
-                  },
+                  validator: (value) => (value == null || value.trim().isEmpty) ? 'Please enter some content' : null,
                 ),
               ),
               const SizedBox(height: 24),
               ElevatedButton(
                 onPressed: _isSaving ? null : _saveEntry,
-                style: ElevatedButton.styleFrom(
-                  padding: const EdgeInsets.symmetric(vertical: 12),
-                ),
-                child:
-                    _isSaving
-                        ? const SizedBox(
-                          height: 20,
-                          width: 20,
-                          child: CircularProgressIndicator(strokeWidth: 2),
-                        )
-                        : const Text(
-                          'Save Entry',
-                          style: TextStyle(fontFamily: 'Poppins', fontSize: 16),
-                        ),
+                style: ElevatedButton.styleFrom(padding: const EdgeInsets.symmetric(vertical: 12)),
+                child: _isSaving
+                    ? const SizedBox(height: 20, width: 20, child: CircularProgressIndicator(strokeWidth: 2))
+                    : const Text('Save Entry', style: TextStyle(fontFamily: 'Poppins', fontSize: 16)),
               ),
             ],
           ),
@@ -436,23 +352,15 @@ class _NewJournalEntryPageState extends State<NewJournalEntryPage> {
   }
 }
 
-// JournalDetailPage displays the selected journal entry.
 class JournalDetailPage extends StatelessWidget {
   final JournalEntry entry;
-
   const JournalDetailPage({super.key, required this.entry});
 
   @override
   Widget build(BuildContext context) {
     return Scaffold(
       appBar: AppBar(
-        title: Text(
-          entry.title,
-          style: const TextStyle(
-            fontFamily: 'Poppins',
-            fontWeight: FontWeight.w600,
-          ),
-        ),
+        title: Text(entry.title, style: const TextStyle(fontFamily: 'Poppins', fontWeight: FontWeight.w600)),
       ),
       body: SingleChildScrollView(
         padding: const EdgeInsets.all(16.0),
@@ -461,20 +369,12 @@ class JournalDetailPage extends StatelessWidget {
           children: [
             Text(
               'Created on: ${entry.createdAt.day}/${entry.createdAt.month}/${entry.createdAt.year}',
-              style: TextStyle(
-                fontFamily: 'Poppins',
-                fontSize: 12,
-                color: Colors.grey[600],
-              ),
+              style: TextStyle(fontFamily: 'Poppins', fontSize: 12, color: Colors.grey[600]),
             ),
             const SizedBox(height: 16),
             Text(
               entry.content,
-              style: const TextStyle(
-                fontFamily: 'Poppins',
-                fontSize: 16,
-                height: 1.5,
-              ),
+              style: const TextStyle(fontFamily: 'Poppins', fontSize: 16, height: 1.5),
             ),
           ],
         ),
