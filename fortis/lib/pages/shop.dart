@@ -1,4 +1,6 @@
 import 'package:flutter/material.dart';
+import 'package:provider/provider.dart';
+import 'package:fortis/theme_change.dart';
 
 void main() {
   runApp(const MyApp());
@@ -20,7 +22,9 @@ class ShopPage extends StatelessWidget {
 
   @override
   Widget build(BuildContext context) {
+    final bgColor = context.watch<ThemeChanger>().backgroundColor;
     return Scaffold(
+      backgroundColor: bgColor,
       appBar: AppBar(
         title: const Text('Shop', style: TextStyle(fontSize: 30, fontWeight: FontWeight.bold)),
         actions: [
@@ -49,9 +53,9 @@ class ShopPage extends StatelessWidget {
           _headerTitle('Themes'),
           Row(
             children: [
-              Expanded(child: _itemTheme('theme name', 'PRICE coins', Colors.blue)),
+              Expanded(child: _itemTheme('theme name', 'PRICE coins', Colors.blue, context)),
               const SizedBox(width: 15),
-              Expanded(child: _itemTheme('theme name', 'PRICE coins', Colors.orange)),
+              Expanded(child: _itemTheme('theme name', 'PRICE coins', Colors.pinkAccent, context)),
             ],
           ),
           // Repeat Row() for more themes
@@ -109,7 +113,7 @@ class ShopPage extends StatelessWidget {
     );
   }
 
-  Widget _itemTheme(String title, String price, Color color) {
+  Widget _itemTheme(String title, String price, Color color, BuildContext context) {
     return Card(
       elevation: 3,
       color: Colors.grey[300],
@@ -128,7 +132,9 @@ class ShopPage extends StatelessWidget {
                 const SizedBox(height: 4),
                 Text(price, style: const TextStyle(color: Colors.blue)),
                 ElevatedButton(
-                  onPressed: () {}, // Add purchase mechanic 
+                  onPressed: () {
+                    context.read<ThemeChanger>().setColor(color);
+                  }, // Add purchase mechanic 
                   child: const Text('Buy'),
                 ),
               ],

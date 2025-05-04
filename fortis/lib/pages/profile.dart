@@ -9,6 +9,8 @@ import 'package:fortis/pages/pop_up_pages/profile_details.dart';
 import 'package:firebase_auth/firebase_auth.dart';
 import 'package:cloud_firestore/cloud_firestore.dart';
 import 'package:fortis/pages/user_login.dart';
+import 'package:provider/provider.dart';
+import 'package:fortis/theme_change.dart';
 
 class ProfilePage extends StatefulWidget {
   const ProfilePage({super.key});
@@ -143,7 +145,9 @@ class _ProfilePageState extends State<ProfilePage> {
 
   @override
   Widget build(BuildContext context) {
+    final bgColor = context.watch<ThemeChanger>().backgroundColor;
     return Scaffold(
+      backgroundColor: bgColor,
       appBar: AppBar(title: const Text('Profile'), centerTitle: true),
       body: _isLoading
           ? const Center(child: CircularProgressIndicator())

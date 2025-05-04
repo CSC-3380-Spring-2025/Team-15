@@ -9,11 +9,18 @@ import 'pages/shop.dart';
 import 'pages/user_login.dart';
 import 'pages/home.dart';
 import 'pages/friends.dart';
+import 'package:provider/provider.dart';
+import 'package:fortis/theme_change.dart';
 
 void main() async {
   WidgetsFlutterBinding.ensureInitialized();
   await Firebase.initializeApp(options: DefaultFirebaseOptions.currentPlatform);
-  runApp(const MyApp());
+  runApp(
+    ChangeNotifierProvider(
+      create: (_) => ThemeChanger(),
+      child: const MyApp(),
+    ),
+  );
 }
 
 class MyApp extends StatelessWidget {
@@ -45,7 +52,7 @@ class _MainScreenState extends State<MainScreen> {
     {"name": "🧘 Meditate", "completed": false, "points": 10},
     {"name": "✍ Journal", "completed": false, "points": 10},
     {"name": "🤔 Reflect", "completed": false, "points": 10},
-    {"name": "💪 Physical Exercise", "completed": false, "points": 10},
+    // {"name": "💪 Physical Exercise", "completed": false, "points": 10},
   ];
 
   int _totalPoints = 0;
