@@ -86,8 +86,20 @@ class _FriendsPageState extends State<FriendsPage> {
           username: user['username']!,
           avatarIndex: user['avatarIndex']!,
           isFriend: isFriend,
-          streakCount: isFriend ? 3 : 0, 
+          streakCount: isFriend ? 3 : 0,
           achievements: isFriend ? ['Consistency'] : [],
+          onSendMessage: isFriend
+              ? () {
+                  Navigator.push(
+                    context,
+                    MaterialPageRoute(
+                      builder: (context) => DirectMessagePage(
+                        recipientUsername: user['username']!,
+                      ),
+                    ),
+                  );
+                }
+              : null,
         ),
       ),
     );
@@ -131,7 +143,7 @@ class _FriendsPageState extends State<FriendsPage> {
           ),
         ),
         SizedBox(
-          height: MediaQuery.of(context).size.height / 3, 
+          height: MediaQuery.of(context).size.height / 3,
           child: ListView.builder(
             itemCount: _recommendedFriends.length,
             itemBuilder: (context, index) {
@@ -151,13 +163,13 @@ class _FriendsPageState extends State<FriendsPage> {
   }
 }
 
-
 class FriendProfilePage extends StatelessWidget {
   final String username;
   final String avatarIndex;
   final bool isFriend;
   final int streakCount;
   final List<String> achievements;
+  final VoidCallback? onSendMessage;
 
   final List<String> _avatarOptions = const [
     'assets/avatars/avatar_1.png',
@@ -178,6 +190,7 @@ class FriendProfilePage extends StatelessWidget {
     required this.isFriend,
     required this.streakCount,
     required this.achievements,
+    this.onSendMessage,
   });
 
   @override
@@ -221,6 +234,11 @@ class FriendProfilePage extends StatelessWidget {
                     },
                     child: const Text('Send Request'),
                   ),
+                if (isFriend && onSendMessage != null)
+                  IconButton(
+                    icon: const Icon(Icons.message),
+                    onPressed: onSendMessage,
+                  ),
               ],
             ),
             const SizedBox(height: 24),
@@ -237,6 +255,75 @@ class FriendProfilePage extends StatelessWidget {
               const Text('No achievements yet.'),
           ],
         ),
+      ),
+    );
+  }
+}
+
+class DirectMessagePage extends StatefulWidget {
+  final String recipientUsername;
+
+  const DirectMessagePage({super.key, required this.recipientUsername});
+
+  @override
+  State<DirectMessagePage> createState() => _DirectMessagePageState();
+}
+
+class _DirectMessagePageState extends State<DirectMessagePage> {
+  final TextEditingController _messageController = TextEditingController();
+  final List<String> _messages = []; 
+
+  void _sendMessage() {
+    final message = _messageController.text.trim();
+    if (message.isNotEmpty) {
+      setState(() {
+        _messages.add('You: $message'); 
+        _messageController.clear();
+      });
+    }
+  }
+
+  @override
+  Widget build(BuildContext context) {
+    return Scaffold(
+      appBar: AppBar(
+        title: Text('DM ${widget.recipientUsername}'),
+      ),
+      body: Column(
+        children: [
+          Expanded(
+            child: ListView.builder(
+              itemCount: _messages.length,
+              itemBuilder: (context, index) {
+                return Padding(
+                  padding: const EdgeInsets.all(8.0),
+                  child: Text(_messages[index]),
+                );
+              },
+            ),
+          ),
+          Padding(
+            padding: const EdgeInsets.all(8.0),
+            child: Row(
+              children: [
+                Expanded(
+                  child: TextField(
+                    controller: _messageController,
+                    decoration: const InputDecoration(
+                      hintText: 'Type a message...',
+                    ),
+                    onSubmitted: (_) => _sendMessage(),
+                  ),
+                ),
+                const SizedBox(width: 8.0),
+                ElevatedButton(
+                  onPressed: _sendMessage,
+                  child: const Icon(Icons.send),
+                ),
+              ],
+            ),
+          ),
+        ],
       ),
     );
   }
