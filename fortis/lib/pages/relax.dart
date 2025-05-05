@@ -5,13 +5,45 @@ import 'package:fortis/pages/pop_up_pages/deep-breathing.dart';
 import 'pop_up_pages/breathing_exercise_page.dart';
 import 'pop_up_pages/beach_waves.dart';
 import 'pop_up_pages/grounding_exercise.dart';
+import 'package:provider/provider.dart';
+import 'package:fortis/theme_change.dart';
 
-class RelaxPage extends StatelessWidget {
+// Convert to StatefulWidget to properly handle state changes
+class RelaxPage extends StatefulWidget {
   const RelaxPage({super.key});
 
   @override
+  State<RelaxPage> createState() => _RelaxPageState();
+}
+
+class _RelaxPageState extends State<RelaxPage> {
+  @override
+  void initState() {
+    super.initState();
+    _refreshData();
+  }
+
+  @override
+  void didChangeDependencies() {
+    super.didChangeDependencies();
+    // This triggers when the page is revisited
+    _refreshData();
+  }
+
+  void _refreshData() {
+    // Find the parent MainScreen state and refresh points
+    // Note: You'll need to ensure your MainScreen widget exists and has the proper state
+    final mainScreenState = context.findAncestorStateOfType<MainScreenState>();
+    if (mainScreenState != null) {
+      mainScreenState.loadTotalPoints();
+    }
+  }
+
+  @override
   Widget build(BuildContext context) {
+    final bgColor = context.watch<ThemeChanger>().backgroundColor;
     return Scaffold(
+      backgroundColor: bgColor,
       appBar: AppBar(
         title: const Text(
           'Take a Moment to Relax',
@@ -38,12 +70,11 @@ class RelaxPage extends StatelessWidget {
             GestureDetector(
               onTap: () {
                 Navigator.push(
-                          context,
-                          MaterialPageRoute(
-                            builder: (context) => const GroundingExercisePage(),
-                          ),
-                        );
-              
+                  context,
+                  MaterialPageRoute(
+                    builder: (context) => const GroundingExercisePage(),
+                  ),
+                );
               },
               child: Row(
                 children: [
@@ -86,6 +117,7 @@ class RelaxPage extends StatelessWidget {
             // Calming Sounds Section
             GestureDetector(
               onTap: () {
+                // Add navigation to a calming sounds page
                 print('Calming Sounds tapped!');
                 // Will add functionality here
               },
@@ -359,4 +391,25 @@ class RelaxPage extends StatelessWidget {
       ),
     );
   }
+}
+
+// Placeholder for the MainScreen state class that needs to be defined elsewhere
+class MainScreenState extends State<MainScreen> {
+  void loadTotalPoints() {
+    // Implementation for loading total points
+  }
+
+  @override
+  Widget build(BuildContext context) {
+    // Implementation needed
+    return Container();
+  }
+}
+
+// Placeholder for the MainScreen widget
+class MainScreen extends StatefulWidget {
+  const MainScreen({super.key});
+
+  @override
+  MainScreenState createState() => MainScreenState();
 }
