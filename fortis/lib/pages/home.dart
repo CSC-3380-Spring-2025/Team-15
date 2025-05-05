@@ -1,5 +1,7 @@
 import 'package:flutter/material.dart';
 import 'package:table_calendar/table_calendar.dart';
+import 'package:provider/provider.dart';
+import 'package:fortis/theme_change.dart';
 
 class HomePage extends StatelessWidget {
   final DateTime today;
@@ -26,6 +28,7 @@ class HomePage extends StatelessWidget {
     final bool isToday = isSameDay(today, DateTime.now());
 
     return Scaffold(
+      backgroundColor: context.watch<ThemeChanger>().backgroundColor,
       appBar: AppBar(title: const Text('Welcome!'), centerTitle: true),
       body: Column(
         children: [

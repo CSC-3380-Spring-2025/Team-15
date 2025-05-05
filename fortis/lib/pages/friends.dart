@@ -1,4 +1,6 @@
 import 'package:flutter/material.dart';
+import 'package:provider/provider.dart';
+import 'package:fortis/theme_change.dart';
 
 class FriendsPage extends StatefulWidget {
   const FriendsPage({super.key});
@@ -180,7 +182,9 @@ class FriendProfilePage extends StatelessWidget {
 
   @override
   Widget build(BuildContext context) {
+    final bgColor = context.watch<ThemeChanger>().backgroundColor;
     return Scaffold(
+      backgroundColor: bgColor,
       appBar: AppBar(
         title: Text(username),
       ),

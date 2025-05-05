@@ -1,5 +1,6 @@
 import 'package:flutter/material.dart';
 import 'package:provider/provider.dart';
+import 'package:fortis/theme_change.dart';
 import 'package:shared_preferences/shared_preferences.dart';
 
 class PointsModel with ChangeNotifier {
@@ -49,7 +50,9 @@ class ShopPage extends StatelessWidget {
 
   @override
   Widget build(BuildContext context) {
+    final bgColor = context.watch<ThemeChanger>().backgroundColor;
     return Scaffold(
+      backgroundColor: bgColor,
       appBar: AppBar(
         title: const Text('Shop',
             style: TextStyle(fontSize: 30, fontWeight: FontWeight.bold)),
@@ -76,10 +79,9 @@ class ShopPage extends StatelessWidget {
           _header('Themes'),
           Row(
             children: [
-              Expanded(child: _itemTheme(context, 'Blue Theme', 30, Colors.blue)),
+              Expanded(child: _itemTheme('theme name', 'PRICE coins', Colors.blue, context)),
               const SizedBox(width: 15),
-              Expanded(
-                  child: _itemTheme(context, 'Orange Theme', 30, Colors.orange)),
+              Expanded(child: _itemTheme('theme name', 'PRICE coins', Colors.pinkAccent, context)),
             ],
           ),
           _header('Premium Audio'),
@@ -133,8 +135,7 @@ class ShopPage extends StatelessWidget {
     );
   }
 
-  Widget _itemTheme(
-      BuildContext context, String title, int price, Color color) {
+  Widget _itemTheme(String title, String price, Color color, BuildContext context) {
     return Card(
       color: Colors.grey[300],
       elevation: 3,
@@ -150,14 +151,12 @@ class ShopPage extends StatelessWidget {
                     style: const TextStyle(
                         fontSize: 18, fontWeight: FontWeight.bold)),
                 const SizedBox(height: 4),
-                Text('$price coins',
-                    style: const TextStyle(color: Colors.blue)),
-                Consumer<PointsModel>(
-                  builder: (_, points, __) => ElevatedButton(
-                    onPressed:
-                        points.coins >= price ? () => points.spend(price) : null,
-                    child: const Text('Buy'),
-                  ),
+                Text(price, style: const TextStyle(color: Colors.blue)),
+                ElevatedButton(
+                  onPressed: () {
+                    context.read<ThemeChanger>().setColor(color);
+                  }, // Add purchase mechanic 
+                  child: const Text('Buy'),
                 ),
               ],
             ),
@@ -167,8 +166,6 @@ class ShopPage extends StatelessWidget {
     );
   }
 }
-
-
 class ShopApp extends StatelessWidget {
   const ShopApp({super.key});
 
