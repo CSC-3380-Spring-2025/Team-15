@@ -22,7 +22,7 @@ class _MindfulMinutesPageState extends State<MindfulMinutesPage> {
         _isPlaying = false;
       });
 
-      // Show completion dialog
+      // Shows completion dialog
       _showCompletionDialog();
     });
   }
@@ -84,7 +84,7 @@ class _MindfulMinutesPageState extends State<MindfulMinutesPage> {
       }
     } catch (e) {
       print('Error playing audio: $e');
-      // Optional: Show a user-friendly error message
+
       ScaffoldMessenger.of(
         context,
       ).showSnackBar(SnackBar(content: Text('Unable to load audio guide')));

@@ -11,9 +11,7 @@ class MyApp extends StatelessWidget {
 
   @override
   Widget build(BuildContext context) {
-    return MaterialApp(
-      home: ShopPage(),
-    );
+    return MaterialApp(home: ShopPage());
   }
 }
 
@@ -26,21 +24,25 @@ class ShopPage extends StatelessWidget {
     return Scaffold(
       backgroundColor: bgColor,
       appBar: AppBar(
-        title: const Text('Shop', style: TextStyle(fontSize: 30, fontWeight: FontWeight.bold)),
+        title: const Text(
+          'Shop',
+          style: TextStyle(fontSize: 30, fontWeight: FontWeight.bold),
+        ),
         actions: [
           Row(
             children: [
               const Icon(Icons.monetization_on, color: Colors.amber),
               const SizedBox(width: 5),
-              const Text('# Coins', style: TextStyle(fontSize: 18)), 
+              const Text(
+                '# Coins',
+                style: TextStyle(fontSize: 18),
+              ), 
               const SizedBox(width: 15),
 
-              const Icon(Icons.notifications, color: Colors.grey), 
-              const Text('      ')
+              const Icon(Icons.notifications, color: Colors.grey),
+              const Text('      '),
             ],
-
-          )
-
+          ),
         ],
       ),
 
@@ -58,14 +60,11 @@ class ShopPage extends StatelessWidget {
               Expanded(child: _itemTheme('theme name', 'PRICE coins', Colors.pinkAccent, context)),
             ],
           ),
-          // Repeat Row() for more themes
-
 
           _headerTitle('Premium Audio'),
           _itemLong('audio name', 'description', 'PRICE coins'),
-          _itemLong('audio name', 'description', 'PRICE coins'), 
           _itemLong('audio name', 'description', 'PRICE coins'),
-          // Repeat _itemLong() for more items
+          _itemLong('audio name', 'description', 'PRICE coins'),
         ],
       ),
     );
@@ -89,22 +88,34 @@ class ShopPage extends StatelessWidget {
       child: ListTile(
         contentPadding: const EdgeInsets.all(15),
         leading: const Icon(Icons.music_note, size: 50, color: Colors.green),
-        title: Text(title, style: const TextStyle(fontSize: 18, fontWeight: FontWeight.bold)),
+        title: Text(
+          title,
+          style: const TextStyle(fontSize: 18, fontWeight: FontWeight.bold),
+        ),
         subtitle: Text(description),
         trailing: Column(
           mainAxisAlignment: MainAxisAlignment.center,
           children: [
-            Text(price, style: const TextStyle(color: Colors.blue, fontWeight: FontWeight.bold)),
+            Text(
+              price,
+              style: const TextStyle(
+                color: Colors.blue,
+                fontWeight: FontWeight.bold,
+              ),
+            ),
             const SizedBox(height: 4),
             SizedBox(
-            height: 30,
-            child: ElevatedButton(
-              onPressed: () {}, 
-              style: ElevatedButton.styleFrom(
-                padding: const EdgeInsets.symmetric(horizontal: 10, vertical: 5), 
-                textStyle: const TextStyle(fontSize: 13),
-              ),
-              child: const Text('Buy'),
+              height: 30,
+              child: ElevatedButton(
+                onPressed: () {},
+                style: ElevatedButton.styleFrom(
+                  padding: const EdgeInsets.symmetric(
+                    horizontal: 10,
+                    vertical: 5,
+                  ),
+                  textStyle: const TextStyle(fontSize: 13),
+                ),
+                child: const Text('Buy'),
               ),
             ),
           ],
@@ -128,13 +139,19 @@ class ShopPage extends StatelessWidget {
             padding: const EdgeInsets.all(8.0),
             child: Column(
               children: [
-                Text(title, style: const TextStyle(fontSize: 18, fontWeight: FontWeight.bold)),
+                Text(
+                  title,
+                  style: const TextStyle(
+                    fontSize: 18,
+                    fontWeight: FontWeight.bold,
+                  ),
+                ),
                 const SizedBox(height: 4),
                 Text(price, style: const TextStyle(color: Colors.blue)),
                 ElevatedButton(
                   onPressed: () {
                     context.read<ThemeChanger>().setColor(color);
-                  }, 
+                  },
                   child: const Text('Buy'),
                 ),
               ],
