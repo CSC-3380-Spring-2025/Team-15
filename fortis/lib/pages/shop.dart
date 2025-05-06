@@ -1,4 +1,6 @@
 import 'package:flutter/material.dart';
+import 'package:provider/provider.dart';
+import 'package:fortis/theme_change.dart';
 
 void main() {
   runApp(const MyApp());
@@ -18,7 +20,9 @@ class ShopPage extends StatelessWidget {
 
   @override
   Widget build(BuildContext context) {
+    final bgColor = context.watch<ThemeChanger>().backgroundColor;
     return Scaffold(
+      backgroundColor: bgColor,
       appBar: AppBar(
         title: const Text(
           'Shop',
@@ -32,14 +36,11 @@ class ShopPage extends StatelessWidget {
               const Text(
                 '# Coins',
                 style: TextStyle(fontSize: 18),
-              ), // User coin count variable goes here
+              ), 
               const SizedBox(width: 15),
 
-              const Icon(
-                Icons.notifications,
-                color: Colors.grey,
-              ), // Notifications placeholder icon
-              const Text('      '),
+              const Icon(Icons.notifications, color: Colors.grey),
+              const Text('      '),
             ],
           ),
         ],
@@ -54,22 +55,16 @@ class ShopPage extends StatelessWidget {
           _headerTitle('Themes'),
           Row(
             children: [
-              Expanded(
-                child: _itemTheme('theme name', 'PRICE coins', Colors.blue),
-              ),
+              Expanded(child: _itemTheme('theme name', 'PRICE coins', Colors.blue, context)),
               const SizedBox(width: 15),
-              Expanded(
-                child: _itemTheme('theme name', 'PRICE coins', Colors.orange),
-              ),
+              Expanded(child: _itemTheme('theme name', 'PRICE coins', Colors.pinkAccent, context)),
             ],
           ),
 
-          // Repeat Row() for more themes
           _headerTitle('Premium Audio'),
           _itemLong('audio name', 'description', 'PRICE coins'),
           _itemLong('audio name', 'description', 'PRICE coins'),
           _itemLong('audio name', 'description', 'PRICE coins'),
-          // Repeat _itemLong() for more items
         ],
       ),
     );
@@ -112,7 +107,7 @@ class ShopPage extends StatelessWidget {
             SizedBox(
               height: 30,
               child: ElevatedButton(
-                onPressed: () {}, // Add purchase mechanic
+                onPressed: () {},
                 style: ElevatedButton.styleFrom(
                   padding: const EdgeInsets.symmetric(
                     horizontal: 10,
@@ -129,7 +124,7 @@ class ShopPage extends StatelessWidget {
     );
   }
 
-  Widget _itemTheme(String title, String price, Color color) {
+  Widget _itemTheme(String title, String price, Color color, BuildContext context) {
     return Card(
       elevation: 3,
       color: Colors.grey[300],
@@ -138,7 +133,7 @@ class ShopPage extends StatelessWidget {
         children: [
           Container(
             height: 100,
-            color: color, // Preview theme color
+            color: color,
           ),
           Padding(
             padding: const EdgeInsets.all(8.0),
@@ -154,7 +149,9 @@ class ShopPage extends StatelessWidget {
                 const SizedBox(height: 4),
                 Text(price, style: const TextStyle(color: Colors.blue)),
                 ElevatedButton(
-                  onPressed: () {}, // Add purchase mechanic
+                  onPressed: () {
+                    context.read<ThemeChanger>().setColor(color);
+                  },
                   child: const Text('Buy'),
                 ),
               ],

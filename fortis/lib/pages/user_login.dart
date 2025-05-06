@@ -78,7 +78,7 @@ class _RegistrationPageState extends State<RegistrationPage>{
       Navigator.pop(context); 
     } else {
       ScaffoldMessenger.of(context).showSnackBar(
-        const SnackBar(content: Text("Failed to register, use an email or stronger password. (test message, change later)")),
+        const SnackBar(content: Text("Failed to register, use an email or stronger password.")),
       );
     }
   }

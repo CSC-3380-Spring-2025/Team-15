@@ -5,8 +5,10 @@ import 'package:fortis/pages/pop_up_pages/deep-breathing.dart';
 import 'pop_up_pages/breathing_exercise_page.dart';
 import 'pop_up_pages/beach_waves.dart';
 import 'pop_up_pages/grounding_exercise.dart';
-// Import journal page
-import 'package:fortis/pages/my_journals_page.dart'; // Adjust the import path as necessary
+import 'package:fortis/pages/my_journals_page.dart'; 
+import 'package:provider/provider.dart';
+import 'package:fortis/theme_change.dart';
+
 
 // Convert to StatefulWidget to properly handle state changes
 class RelaxPage extends StatefulWidget {
@@ -41,7 +43,9 @@ class _RelaxPageState extends State<RelaxPage> {
 
   @override
   Widget build(BuildContext context) {
+    final bgColor = context.watch<ThemeChanger>().backgroundColor;
     return Scaffold(
+      backgroundColor: bgColor,
       appBar: AppBar(
         title: const Text(
           'Take a Moment to Relax',
