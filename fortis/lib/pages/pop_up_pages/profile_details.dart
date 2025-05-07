@@ -16,7 +16,7 @@ class _ProfileDetailsPageState extends State<ProfileDetailsPage> {
 
   final _formKey = GlobalKey<FormState>();
   bool _isLoading = true;
-  bool _isEditing = false;
+  bool _isEditing = true;
 
   // User profile data
   late TextEditingController _firstNameController;
@@ -200,7 +200,7 @@ class _ProfileDetailsPageState extends State<ProfileDetailsPage> {
           const SnackBar(content: Text('Profile updated successfully')),
         );
 
-        setState(() => _isEditing = false);
+        setState(() => _isEditing = true);
       }
     } catch (e) {
       debugPrint('Error saving user data: $e');
@@ -340,7 +340,7 @@ class _ProfileDetailsPageState extends State<ProfileDetailsPage> {
                                   )
                                   : null,
                         ),
-                        readOnly: true,
+                        readOnly: false,
                         enabled: _isEditing,
                       ),
                       const SizedBox(height: 16),
