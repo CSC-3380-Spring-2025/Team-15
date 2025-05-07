@@ -57,17 +57,17 @@ class _ProfilePageState extends State<ProfilePage> {
     if (_currentUser == null) return;
     setState(() => _isLoading = true);
     try {
-      final userDoc = await _firestore
-          .collection('users')
-          .doc(_currentUser!.uid)
-          .get();
+      final userDoc =
+          await _firestore.collection('users').doc(_currentUser!.uid).get();
       if (userDoc.exists) {
         final userData = userDoc.data() as Map<String, dynamic>;
         _selectedAvatarIndex = userData['avatarIndex'] ?? _selectedAvatarIndex;
         firstName = userData['firstName'] ?? firstName;
         lastName = userData['lastName'] ?? lastName;
         _daysSignedIn = userData['daysSignedIn'] ?? _daysSignedIn;
-        _challengesCompleted = userData['challengesCompleted'] ?? _challengesCompleted;
+
+        _challengesCompleted =
+            userData['challengesCompleted'] ?? _challengesCompleted;
         if (userData['createdAt'] != null) {
           _accountCreationDate = (userData['createdAt'] as Timestamp).toDate();
         }
@@ -95,9 +95,9 @@ class _ProfilePageState extends State<ProfilePage> {
       );
     } catch (e) {
       debugPrint('Error updating avatar: $e');
-      ScaffoldMessenger.of(context).showSnackBar(
-        SnackBar(content: Text('Failed to update avatar: $e')),
-      );
+      ScaffoldMessenger.of(
+        context,
+      ).showSnackBar(SnackBar(content: Text('Failed to update avatar: $e')));
     } finally {
       setState(() => _isLoading = false);
     }
@@ -106,40 +106,46 @@ class _ProfilePageState extends State<ProfilePage> {
   void _showAvatarSelectionDialog() {
     showDialog(
       context: context,
-      builder: (_) => AlertDialog(
-        title: const Text('Select Avatar'),
-        content: SizedBox(
-          width: double.maxFinite,
-          child: GridView.builder(
-            shrinkWrap: true,
-            gridDelegate: const SliverGridDelegateWithFixedCrossAxisCount(
-              crossAxisCount: 3,
-              mainAxisSpacing: 10,
-              crossAxisSpacing: 10,
-            ),
-            itemCount: _avatarOptions.length,
-            itemBuilder: (context, index) => InkWell(
-              onTap: () {
-                Navigator.of(context).pop();
-                _updateAvatar(index);
-              },
-              child: CircleAvatar(
-                radius: 30,
-                backgroundImage: AssetImage(_avatarOptions[index]),
-                child: _selectedAvatarIndex == index
-                    ? const Icon(Icons.check_circle, color: Colors.green)
-                    : null,
+      builder:
+          (_) => AlertDialog(
+            title: const Text('Select Avatar'),
+            content: SizedBox(
+              width: double.maxFinite,
+              child: GridView.builder(
+                shrinkWrap: true,
+                gridDelegate: const SliverGridDelegateWithFixedCrossAxisCount(
+                  crossAxisCount: 3,
+                  mainAxisSpacing: 10,
+                  crossAxisSpacing: 10,
+                ),
+                itemCount: _avatarOptions.length,
+                itemBuilder:
+                    (context, index) => InkWell(
+                      onTap: () {
+                        Navigator.of(context).pop();
+                        _updateAvatar(index);
+                      },
+                      child: CircleAvatar(
+                        radius: 30,
+                        backgroundImage: AssetImage(_avatarOptions[index]),
+                        child:
+                            _selectedAvatarIndex == index
+                                ? const Icon(
+                                  Icons.check_circle,
+                                  color: Colors.green,
+                                )
+                                : null,
+                      ),
+                    ),
               ),
             ),
+            actions: [
+              TextButton(
+                onPressed: () => Navigator.of(context).pop(),
+                child: const Text('Cancel'),
+              ),
+            ],
           ),
-        ),
-        actions: [
-          TextButton(
-            onPressed: () => Navigator.of(context).pop(),
-            child: const Text('Cancel'),
-          ),
-        ],
-      ),
     );
   }
 
@@ -149,150 +155,172 @@ class _ProfilePageState extends State<ProfilePage> {
     return Scaffold(
       backgroundColor: bgColor,
       appBar: AppBar(title: const Text('Profile'), centerTitle: true),
-      body: _isLoading
-          ? const Center(child: CircularProgressIndicator())
-          : SingleChildScrollView(
-              padding: const EdgeInsets.symmetric(vertical: 16),
-              child: Column(
-                crossAxisAlignment: CrossAxisAlignment.stretch,
-                children: [
-                  // Profile header
-                  Padding(
-                    padding: const EdgeInsets.all(16),
-                    child: Column(
-                      children: [
-                        GestureDetector(
-                          onTap: _showAvatarSelectionDialog,
-                          child: CircleAvatar(
-                            radius: 50,
-                            backgroundImage:
-                                AssetImage(_avatarOptions[_selectedAvatarIndex]),
+      body:
+          _isLoading
+              ? const Center(child: CircularProgressIndicator())
+              : SingleChildScrollView(
+                padding: const EdgeInsets.symmetric(vertical: 16),
+                child: Column(
+                  crossAxisAlignment: CrossAxisAlignment.stretch,
+                  children: [
+                    // Profile header
+                    Padding(
+                      padding: const EdgeInsets.all(16),
+                      child: Column(
+                        children: [
+                          GestureDetector(
+                            onTap: _showAvatarSelectionDialog,
+                            child: CircleAvatar(
+                              radius: 50,
+                              backgroundImage: AssetImage(
+                                _avatarOptions[_selectedAvatarIndex],
+                              ),
+                            ),
                           ),
-                        ),
-                        const SizedBox(height: 12),
-                        Text(
-                          firstName != null && lastName != null
-                              ? '$firstName $lastName'
-                              : 'Profile User',
-                          style: const TextStyle(
-                            fontSize: 18,
-                            fontWeight: FontWeight.bold,
+                          const SizedBox(height: 12),
+                          Text(
+                            firstName != null && lastName != null
+                                ? '$firstName $lastName'
+                                : 'Profile User',
+                            style: const TextStyle(
+                              fontSize: 18,
+                              fontWeight: FontWeight.bold,
+                            ),
                           ),
-                        ),
-                        const SizedBox(height: 4),
-                        Text(
-                          _currentUser?.email ?? '',
-                          style: const TextStyle(color: Colors.grey),
-                        ),
-                        const SizedBox(height: 12),
-                        ElevatedButton(
-                          onPressed: _showAvatarSelectionDialog,
-                          child: const Text('Change Avatar'),
-                        ),
-                      ],
+                          const SizedBox(height: 4),
+                          Text(
+                            _currentUser?.email ?? '',
+                            style: const TextStyle(color: Colors.grey),
+                          ),
+                          const SizedBox(height: 12),
+                          ElevatedButton(
+                            onPressed: _showAvatarSelectionDialog,
+                            child: const Text('Change Avatar'),
+                          ),
+                        ],
+                      ),
                     ),
-                  ),
-                  const Divider(),
+                    const Divider(),
 
-                  // Achievements in a row
-                  Padding(
-                    padding: const EdgeInsets.symmetric(horizontal: 16, vertical: 8),
-                    child: Column(
-                      crossAxisAlignment: CrossAxisAlignment.start,
-                      children: [
-                        const Text(
-                          'Achievements',
-                          style: TextStyle(
-                            fontSize: 16,
-                            fontWeight: FontWeight.w600,
+                    // Achievements in a row
+                    Padding(
+                      padding: const EdgeInsets.symmetric(
+                        horizontal: 16,
+                        vertical: 8,
+                      ),
+                      child: Column(
+                        crossAxisAlignment: CrossAxisAlignment.start,
+                        children: [
+                          const Text(
+                            'Achievements',
+                            style: TextStyle(
+                              fontSize: 16,
+                              fontWeight: FontWeight.w600,
+                            ),
                           ),
-                        ),
-                        const SizedBox(height: 8),
-                        Row(
-                          mainAxisAlignment: MainAxisAlignment.spaceAround,
-                          children: [
-                            _buildAchievementItem(
-                              icon: Icons.cake,
-                              label: 'Joined',
-                              value: _accountCreationDate != null
-                                  ? '${_accountCreationDate!.toLocal()}'.split(' ')[0]
-                                  : 'N/A',
-                            ),
-                            _buildAchievementItem(
-                              icon: Icons.calendar_today,
-                              label: 'Days Signed In',
-                              value: '$_daysSignedIn',
-                            ),
-                            _buildAchievementItem(
-                              icon: Icons.check_circle_outline,
-                              label: 'Challenges',
-                              value: '$_challengesCompleted',
-                            ),
-                          ],
-                        ),
-                      ],
+                          const SizedBox(height: 8),
+                          Row(
+                            mainAxisAlignment: MainAxisAlignment.spaceAround,
+                            children: [
+                              _buildAchievementItem(
+                                icon: Icons.cake,
+                                label: 'Joined',
+                                value:
+                                    _accountCreationDate != null
+                                        ? '${_accountCreationDate!.toLocal()}'
+                                            .split(' ')[0]
+                                        : 'N/A',
+                              ),
+                              _buildAchievementItem(
+                                icon: Icons.calendar_today,
+                                label: 'Days Signed In',
+                                value: '$_daysSignedIn',
+                              ),
+                              _buildAchievementItem(
+                                icon: Icons.check_circle_outline,
+                                label: 'Challenges',
+                                value: '$_challengesCompleted',
+                              ),
+                            ],
+                          ),
+                        ],
+                      ),
                     ),
-                  ),
-                  const Divider(),
+                    const Divider(),
 
-                  // Menu items
-                  _buildMenuItem(
-                    icon: Icons.book_outlined,
-                    title: 'My Journals',
-                    onTap: () => Navigator.push(
-                      context,
-                      MaterialPageRoute(builder: (_) => const MyJournalsPage()),
+                    //Menu Itmes-------
+                    _buildMenuItem(
+                      icon: Icons.book_outlined,
+                      title: 'My Journals',
+                      onTap:
+                          () => Navigator.push(
+                            context,
+                            MaterialPageRoute(
+                              builder: (_) => const MyJournalsPage(),
+                            ),
+                          ),
                     ),
-                  ),
-                  _buildMenuItem(
-                    icon: Icons.person_outline,
-                    title: 'Profile',
-                    onTap: () => Navigator.push(
-                      context,
-                      MaterialPageRoute(builder: (_) => const ProfileDetailsPage()),
+                    _buildMenuItem(
+                      icon: Icons.person_outline,
+                      title: 'Profile',
+                      onTap:
+                          () => Navigator.push(
+                            context,
+                            MaterialPageRoute(
+                              builder: (_) => const ProfileDetailsPage(),
+                            ),
+                          ),
                     ),
-                  ),
-                  _buildMenuItem(
-                    icon: Icons.settings_outlined,
-                    title: 'Settings',
-                    onTap: () => Navigator.push(
-                      context,
-                      MaterialPageRoute(builder: (_) => const SettingsPage()),
+                    _buildMenuItem(
+                      icon: Icons.settings_outlined,
+                      title: 'Settings',
+                      onTap:
+                          () => Navigator.push(
+                            context,
+                            MaterialPageRoute(
+                              builder: (_) => const SettingsPage(),
+                            ),
+                          ),
                     ),
-                  ),
-                  _buildMenuItem(
-                    icon: Icons.notifications_outlined,
-                    title: 'Notification',
-                    onTap: () => Navigator.push(
-                      context,
-                      MaterialPageRoute(builder: (_) => const NotificationsPage()),
+                    _buildMenuItem(
+                      icon: Icons.notifications_outlined,
+                      title: 'Notification',
+                      onTap:
+                          () => Navigator.push(
+                            context,
+                            MaterialPageRoute(
+                              builder: (_) => const NotificationsPage(),
+                            ),
+                          ),
                     ),
-                  ),
-                  _buildMenuItem(
-                    icon: Icons.help_outline,
-                    title: 'Help Center',
-                    onTap: () => Navigator.push(
-                      context,
-                      MaterialPageRoute(builder: (_) => const HelpCenterPage()),
+                    _buildMenuItem(
+                      icon: Icons.help_outline,
+                      title: 'Help Center',
+                      onTap:
+                          () => Navigator.push(
+                            context,
+                            MaterialPageRoute(
+                              builder: (_) => const HelpCenterPage(),
+                            ),
+                          ),
                     ),
-                  ),
-                  const Divider(),
-                  _buildMenuItem(
-                    icon: Icons.logout_outlined,
-                    title: 'Logout',
-                    textColor: Colors.red,
-                    onTap: () async {
-                      await _auth.signOut();
-                      Navigator.of(context).pushAndRemoveUntil(
-                        MaterialPageRoute(builder: (_) => const LoginPage()),
-                        (route) => false,
-                      );
-                    },
-                  ),
-                  const SizedBox(height: 16),
-                ],
+                    const Divider(),
+                    _buildMenuItem(
+                      icon: Icons.logout_outlined,
+                      title: 'Logout',
+                      textColor: Colors.red,
+                      onTap: () async {
+                        await _auth.signOut();
+                        Navigator.of(context).pushAndRemoveUntil(
+                          MaterialPageRoute(builder: (_) => const LoginPage()),
+                          (route) => false,
+                        );
+                      },
+                    ),
+                    const SizedBox(height: 16),
+                  ],
+                ),
               ),
-            ),
     );
   }
 
@@ -310,10 +338,7 @@ class _ProfilePageState extends State<ProfilePage> {
           style: const TextStyle(fontSize: 14, fontWeight: FontWeight.bold),
         ),
         const SizedBox(height: 2),
-        Text(
-          label,
-          style: const TextStyle(fontSize: 12, color: Colors.grey),
-        ),
+        Text(label, style: const TextStyle(fontSize: 12, color: Colors.grey)),
       ],
     );
   }
@@ -332,6 +357,3 @@ class _ProfilePageState extends State<ProfilePage> {
     );
   }
 }
-  
-
-

@@ -1,6 +1,5 @@
 import 'package:firebase_auth/firebase_auth.dart';
 import 'package:flutter/material.dart';
-
 import '/services/firebase_auth.dart';
 import '/main.dart';
 
@@ -9,13 +8,16 @@ class LoginPage extends StatefulWidget {
 
   @override
   State<LoginPage> createState() => _LoginPageState();
-  }
+}
 
 class _LoginPageState extends State<LoginPage> {
   final FirebaseAuthService _firebaseAuthService = FirebaseAuthService();
 
   void _signIn(String email, String password) async {
-    User? user = await _firebaseAuthService.signInWithEmailAndPassword(email, password);
+    User? user = await _firebaseAuthService.signInWithEmailAndPassword(
+      email,
+      password,
+    );
 
     if (!mounted) return;
 
@@ -26,7 +28,9 @@ class _LoginPageState extends State<LoginPage> {
       );
     } else {
       ScaffoldMessenger.of(context).showSnackBar(
-        const SnackBar(content: Text("Login failed, email or password is incorrect")),
+        const SnackBar(
+          content: Text("Login failed, email or password is incorrect"),
+        ),
       );
     }
   }
@@ -63,22 +67,29 @@ class RegistrationPage extends StatefulWidget {
   State<RegistrationPage> createState() => _RegistrationPageState();
 }
 
-class _RegistrationPageState extends State<RegistrationPage>{
+class _RegistrationPageState extends State<RegistrationPage> {
   final FirebaseAuthService _firebaseAuthService = FirebaseAuthService();
 
   void _signUp(String email, String password) async {
-    User? user = await _firebaseAuthService.signUpWithEmailAndPassword(email, password);
+    User? user = await _firebaseAuthService.signUpWithEmailAndPassword(
+      email,
+      password,
+    );
 
     if (!mounted) return;
 
     if (user != null) {
-      ScaffoldMessenger.of(context).showSnackBar(
-        const SnackBar(content: Text("Registration successful!")),
-      );
-      Navigator.pop(context); 
+      ScaffoldMessenger.of(
+        context,
+      ).showSnackBar(const SnackBar(content: Text("Registration successful!")));
+      Navigator.pop(context);
     } else {
       ScaffoldMessenger.of(context).showSnackBar(
-        const SnackBar(content: Text("Failed to register, use an email or stronger password.")),
+        const SnackBar(
+          content: Text(
+            "Failed to register, use an email or stronger password.",
+          ),
+        ),
       );
     }
   }
@@ -96,7 +107,7 @@ class _RegistrationPageState extends State<RegistrationPage>{
           _signUp(email, password);
         },
         onSecondButtonPress: () {
-          Navigator.pop(context); 
+          Navigator.pop(context);
         },
       ),
     );
@@ -118,7 +129,7 @@ class CredentialsUI extends StatefulWidget {
     required this.onFirstButtonPress,
     required this.onSecondButtonPress,
     this.secondButtonTextNote,
-    super.key
+    super.key,
   });
 
   @override
@@ -142,7 +153,7 @@ class _CredentialsUIState extends State<CredentialsUI> {
             alignment: Alignment.center,
             padding: const EdgeInsets.all(10),
             child: const Text(
-              'Fortis', 
+              'Fortis',
               style: TextStyle(
                 color: Colors.black,
                 fontWeight: FontWeight.w500,
@@ -153,10 +164,7 @@ class _CredentialsUIState extends State<CredentialsUI> {
           Container(
             alignment: Alignment.center,
             padding: const EdgeInsets.all(10),
-            child: Text(
-              widget.title,
-              style: const TextStyle(fontSize: 20),
-            ),
+            child: Text(widget.title, style: const TextStyle(fontSize: 20)),
           ),
           Container(
             padding: const EdgeInsets.all(10),

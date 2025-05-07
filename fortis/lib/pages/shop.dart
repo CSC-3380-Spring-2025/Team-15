@@ -2,25 +2,24 @@ import 'package:flutter/material.dart';
 import 'package:provider/provider.dart';
 import 'package:fortis/theme_change.dart';
 
-void main() {
-  runApp(const MyApp());
-}
-
-class MyApp extends StatelessWidget {
-  const MyApp({super.key});
-
-  @override
-  Widget build(BuildContext context) {
-    return MaterialApp(home: ShopPage());
-  }
-}
-
 class ShopPage extends StatelessWidget {
   const ShopPage({super.key});
+
+  // Constants for styling
+  static const double headerFontSize = 20.0;
+  static const double titleFontSize = 18.0;
+  static const double itemSpacing = 15.0;
+  static const double themeItemHeight = 100.0;
+  static const double iconSize = 50.0;
+  static const EdgeInsets defaultPadding = EdgeInsets.all(15.0);
+  static const BorderRadius cardBorderRadius = BorderRadius.all(
+    Radius.circular(15),
+  );
 
   @override
   Widget build(BuildContext context) {
     final bgColor = context.watch<ThemeChanger>().backgroundColor;
+
     return Scaffold(
       backgroundColor: bgColor,
       appBar: AppBar(
@@ -31,66 +30,101 @@ class ShopPage extends StatelessWidget {
         actions: [
           Row(
             children: [
-              const Icon(Icons.monetization_on, color: Colors.amber),
+              const Icon(
+                Icons.monetization_on,
+                color: Colors.amber,
+                semanticLabel: 'Coins',
+              ),
               const SizedBox(width: 5),
-              const Text(
-                '# Coins',
-                style: TextStyle(fontSize: 18),
-              ), 
+              const Text('# Coins', style: TextStyle(fontSize: 18)),
               const SizedBox(width: 15),
-
-              const Icon(Icons.notifications, color: Colors.grey),
-              const Text('      '),
+              const Icon(
+                Icons.notifications,
+                color: Colors.grey,
+                semanticLabel: 'Notifications',
+              ),
+              const SizedBox(width: 15),
             ],
           ),
         ],
       ),
 
       body: ListView(
-        padding: const EdgeInsets.all(15.0),
+        padding: defaultPadding,
         children: [
-          _headerTitle('Featured'),
-          _itemLong('featured name', 'description', 'PRICE coins'),
-
-          _headerTitle('Themes'),
-          Row(
-            children: [
-              Expanded(child: _itemTheme('theme name', 'PRICE coins', Colors.blue, context)),
-              const SizedBox(width: 15),
-              Expanded(child: _itemTheme('theme name', 'PRICE coins', Colors.pinkAccent, context)),
-            ],
+          _buildHeaderTitle('Featured'),
+          _buildLongItem(
+            context,
+            'Featured item',
+            'This is a featured item description',
+            '100 coins',
           ),
+          _buildHeaderTitle('Themes'),
+          const SizedBox(height: itemSpacing),
+          _buildThemeRow(context),
 
-          _headerTitle('Premium Audio'),
-          _itemLong('audio name', 'description', 'PRICE coins'),
-          _itemLong('audio name', 'description', 'PRICE coins'),
-          _itemLong('audio name', 'description', 'PRICE coins'),
+          _buildHeaderTitle('Premium Audio'),
+          _buildLongItem(
+            context,
+            'Premium Audio 1',
+            'High quality audio track',
+            '200 coins',
+          ),
+          _buildLongItem(
+            context,
+            'Premium Audio 2',
+            'Exclusive sound effect',
+            '250 coins',
+          ),
+          _buildLongItem(
+            context,
+            'Premium Audio 3',
+            'Limited edition music',
+            '300 coins',
+          ),
         ],
       ),
     );
   }
 
-  Widget _headerTitle(String title) {
+  Widget _buildHeaderTitle(String title) {
     return Padding(
       padding: const EdgeInsets.symmetric(vertical: 10.0),
       child: Text(
         title,
-        style: const TextStyle(fontSize: 20, fontWeight: FontWeight.bold),
+        style: const TextStyle(
+          fontSize: headerFontSize,
+          fontWeight: FontWeight.bold,
+        ),
       ),
     );
   }
 
-  Widget _itemLong(String title, String description, String price) {
+  Widget _buildLongItem(
+    BuildContext context,
+    String title,
+    String description,
+    String price,
+  ) {
     return Card(
       color: Colors.grey[300],
       elevation: 3,
-      shape: RoundedRectangleBorder(borderRadius: BorderRadius.circular(15)),
+      shape: RoundedRectangleBorder(borderRadius: cardBorderRadius),
+      margin: const EdgeInsets.only(bottom: itemSpacing),
       child: ListTile(
-        contentPadding: const EdgeInsets.all(15),
-        leading: const Icon(Icons.music_note, size: 50, color: Colors.green),
+        contentPadding: defaultPadding,
+        leading: const Icon(
+          Icons.music_note,
+          size: iconSize,
+          color: Colors.green,
+          semanticLabel: 'Item icon',
+        ),
         title: Text(
           title,
-          style: const TextStyle(fontSize: 18, fontWeight: FontWeight.bold),
+          style: const TextStyle(
+            fontSize: titleFontSize,
+            fontWeight: FontWeight.bold,
+          ),
         ),
         subtitle: Text(description),
         trailing: Column(
@@ -107,13 +141,12 @@ class ShopPage extends StatelessWidget {
             SizedBox(
               height: 30,
               child: ElevatedButton(
-                onPressed: () {},
+                onPressed: () => _handlePurchase(context, title, price),
                 style: ElevatedButton.styleFrom(
                   padding: const EdgeInsets.symmetric(
                     horizontal: 10,
                     vertical: 5,
                   ),
-                  textStyle: const TextStyle(fontSize: 13),
                 ),
                 child: const Text('Buy'),
               ),
@@ -124,17 +157,43 @@ class ShopPage extends StatelessWidget {
     );
   }
 
-  Widget _itemTheme(String title, String price, Color color, BuildContext context) {
+  Widget _buildThemeRow(BuildContext context) {
+    return Row(
+      children: [
+        Expanded(
+          child: _buildThemeItem(
+            'Blue Theme',
+            '150 coins',
+            Colors.blue,
+            context,
+          ),
+        ),
+        const SizedBox(width: itemSpacing),
+        Expanded(
+          child: _buildThemeItem(
+            'Pink Theme',
+            '150 coins',
+            Colors.pinkAccent,
+            context,
+          ),
+        ),
+      ],
+    );
+  }
+
+  Widget _buildThemeItem(
+    String title,
+    String price,
+    Color color,
+    BuildContext context,
+  ) {
     return Card(
       elevation: 3,
       color: Colors.grey[300],
-      shape: RoundedRectangleBorder(borderRadius: BorderRadius.circular(15)),
+      shape: RoundedRectangleBorder(borderRadius: cardBorderRadius),
       child: Column(
         children: [
-          Container(
-            height: 100,
-            color: color,
-          ),
+          Container(height: themeItemHeight, color: color),
           Padding(
             padding: const EdgeInsets.all(8.0),
             child: Column(
@@ -142,16 +201,14 @@ class ShopPage extends StatelessWidget {
                 Text(
                   title,
                   style: const TextStyle(
-                    fontSize: 18,
+                    fontSize: titleFontSize,
                     fontWeight: FontWeight.bold,
                   ),
                 ),
                 const SizedBox(height: 4),
                 Text(price, style: const TextStyle(color: Colors.blue)),
                 ElevatedButton(
-                  onPressed: () {
-                    context.read<ThemeChanger>().setColor(color);
-                  },
+                  onPressed: () => _handleThemeChange(context, color),
                   child: const Text('Buy'),
                 ),
               ],
@@ -160,5 +217,25 @@ class ShopPage extends StatelessWidget {
         ],
       ),
     );
+  }
+
+  void _handlePurchase(BuildContext context, String itemName, String price) {
+    // Implement purchase logic
+    ScaffoldMessenger.of(
+      context,
+    ).showSnackBar(SnackBar(content: Text('Purchased $itemName for $price')));
+  }
+
+  void _handleThemeChange(BuildContext context, Color color) {
+    try {
+      context.read<ThemeChanger>().setColor(color);
+      ScaffoldMessenger.of(context).showSnackBar(
+        const SnackBar(content: Text('Theme changed successfully')),
+      );
+    } catch (e) {
+      ScaffoldMessenger.of(
+        context,
+      ).showSnackBar(const SnackBar(content: Text('Failed to change theme')));
+    }
   }
 }
