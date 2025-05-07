@@ -5,10 +5,9 @@ import 'package:fortis/pages/pop_up_pages/deep-breathing.dart';
 import 'pop_up_pages/breathing_exercise_page.dart';
 import 'pop_up_pages/beach_waves.dart';
 import 'pop_up_pages/grounding_exercise.dart';
-import 'package:fortis/pages/my_journals_page.dart'; 
+import 'package:fortis/pages/my_journals_page.dart';
 import 'package:provider/provider.dart';
 import 'package:fortis/theme_change.dart';
-
 
 // Convert to StatefulWidget to properly handle state changes
 class RelaxPage extends StatefulWidget {
@@ -165,51 +164,6 @@ class _RelaxPageState extends State<RelaxPage> {
                       ),
                       Text(
                         'Quick grounding',
-                        style: TextStyle(
-                          fontFamily: 'Poppins',
-                          color: Colors.black54,
-                          fontSize: 14,
-                        ),
-                      ),
-                    ],
-                  ),
-                ],
-              ),
-            ),
-
-            const SizedBox(height: 20),
-
-            // Calming Sounds Section
-            GestureDetector(
-              onTap: () {
-                // Add navigation to a calming sounds page
-                print('Calming Sounds tapped!');
-                // Will add functionality here
-              },
-              child: Row(
-                children: [
-                  Container(
-                    padding: const EdgeInsets.all(12),
-                    decoration: BoxDecoration(
-                      color: Colors.purple.shade100,
-                      borderRadius: BorderRadius.circular(12),
-                    ),
-                    child: const Icon(Icons.music_note, color: Colors.purple),
-                  ),
-                  const SizedBox(width: 12),
-                  const Column(
-                    crossAxisAlignment: CrossAxisAlignment.start,
-                    children: [
-                      Text(
-                        'Calming Sounds',
-                        style: TextStyle(
-                          fontFamily: 'Poppins',
-                          fontWeight: FontWeight.w600,
-                          fontSize: 16,
-                        ),
-                      ),
-                      Text(
-                        'Ambient music',
                         style: TextStyle(
                           fontFamily: 'Poppins',
                           color: Colors.black54,
