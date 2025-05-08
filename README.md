@@ -1,55 +1,52 @@
 # Fortis : Team 15
+
 # Members
+
 Project Manager: Cameron Sevin (csevin3)\
 Communications Lead: Mark Plaisance (MarkPlaisance)\
 Git Master: Brandon Tran (brandont120)\
 Design Lead: Lorenzo Jackson (keezyttg)\
-Quality Assurance Tester: Candor Alemu ([GitHub Name])
+Quality Assurance Tester: Candor Alemu (calemu1)
 
 # About Our Software
 
-Describe a little about what the project is about here.
+A mobile application that transforms personal development into an engaging game. Users complete daily wellness challenges (meditation, journaling, reflection) to earn points, which can be redeemed for app customizations. Features an anxiety grounding tool that guides users through proven distraction techniques. Built with Flutter/Dart and Firebase by Team 15.
+
 ## Platforms Tested on
-- MacOS
+
 - Android
-- iOS
-- Linux
-- Windows
+
 # Important Links
-Kanban Board: [link]\
-Designs: [link]\
-Styles Guide(s): [link]
+
+Kanban Board: [https://deformed234man.atlassian.net/jira/software/projects/MFLP/summary?atlOrigin=eyJpIjoiMDdkYjBjNGFkZDU2NDZhNTkzMDE4Yzc0ZDk0YzIzOTEiLCJwIjoiaiJ9]\
+Designs: [https://www.figma.com/design/MNf1g2YxivR126uPglBm6J/OOD?node-id=0-1&t=8A2eRpiqqIO9Z2vU-1]\
+Styles Guide(s): [https://dart.dev/effective-dart/style]
 
 # How to Run Dev and Test Environment
+Open the Fortis project in VS Code. Use an android emulator (we used the Flutter emulator through Android Studio) or a physical android device. Navigate to the fortis directory within the terminal. Launch the emulator and run the command "flutter run" in the terminal to start the app.
 
 ## Dependencies
-- List all dependencies here
-- Don't forget to include versions
+  provider: ^6.0.5\
+  image_picker: ^1.0.4\
+  audioplayers: ^5.2.0\
+  cupertino_icons: ^1.0.8
+  table_calendar: ^3.2.0
+  firebase_core: ^3.12.1
+  firebase_auth: ^5.5.1
+  firebase_storage: 12.4.4
+  path: ^1.8.3
+  cloud_firestore: ^5.6.5
+  font_awesome_flutter: ^10.8.0
+  shared_preferences: ^2.5.3
+  
+  flutter:\
+    sdk: flutter
+
 ### Downloading Dependencies
-Describe where to download the dependencies here. Some will likely require a web download. Provide links here. For IDE extensions, make sure your project works with the free version of them, and detail which IDE(s) these are available in. 
+
+Install the flutter extension from the VS Code extensions marketplace. Nagivated to the fortis directory and run the command "flutter pub get" to download the dependencies. Install an android emulator, either Flutter emulator through Android Studio or connect a phsical android device.
 
 ## Commands
-Describe how the commands and process to launch the project on the main branch in such a way that anyone working on the project knows how to check the affects of any code they add.
 
-```sh
-Example terminal command syntax
-```
+Once the emulator is launched, run "flutter run" to launch the app.
 
-It is very common in these sections to see code in peculiar boxes to help them stand out. Check the markdown section of the Project Specifications to see how to add more / customize these.
-
-```python
-def code_highlight_example(m: int, m: float, s: str) -> str:
-	return s + str(n*m)
-```
-
-```java
-public static void main(String[] args){
-	System.out.println("Hello, World!");
-}
-```
-
-```c#
-static void Main(){
-	Console.WriteLine("Hello, World!");
-}
-```

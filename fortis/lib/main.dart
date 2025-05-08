@@ -12,6 +12,7 @@ import 'pages/friends.dart';
 import 'package:provider/provider.dart';
 import 'package:fortis/theme_change.dart';
 
+
 void main() async {
   WidgetsFlutterBinding.ensureInitialized();
   await Firebase.initializeApp(options: DefaultFirebaseOptions.currentPlatform);
@@ -35,6 +36,7 @@ class MyApp extends StatelessWidget {
   }
 }
 
+//flutter
 class MainScreen extends StatefulWidget {
   const MainScreen({super.key});
 
@@ -52,13 +54,13 @@ class _MainScreenState extends State<MainScreen> {
     {"name": "🧘 Meditate", "completed": false, "points": 10},
     {"name": "✍ Journal", "completed": false, "points": 10},
     {"name": "🤔 Reflect", "completed": false, "points": 10},
-    // {"name": "💪 Physical Exercise", "completed": false, "points": 10},
+    {"name": "💪 Physical Exercise", "completed": false, "points": 10},
   ];
 
   int _totalPoints = 0;
   bool _isLoading = true;
   Map<DateTime, bool> completedDays = {};
-  int _currentStreak = 0; // 🔥 Track streak
+  int _currentStreak = 0; 
 
   @override
   void initState() {
@@ -69,8 +71,7 @@ class _MainScreenState extends State<MainScreen> {
   Future<void> _loadData() async {
     await _loadTotalPoints();
     await _loadChallengesForDate(today);
-    _calculateStreak(); // 🔥 Recalculate streak after loading
-
+    _calculateStreak(); 
     setState(() {
       _isLoading = false;
     });
@@ -164,7 +165,7 @@ class _MainScreenState extends State<MainScreen> {
         };
       });
 
-      _calculateStreak(); // 🔥 Recalculate streak after toggling
+      _calculateStreak(); 
 
     } catch (e) {
       print('Error saving data: $e');
@@ -220,7 +221,7 @@ class _MainScreenState extends State<MainScreen> {
               onDaySelected: changeDay,
               points: _totalPoints,
               completedDays: completedDays,
-              streak: _currentStreak, // 🔥 Pass streak
+              streak: _currentStreak, 
             ),
       const RelaxPage(),
       const ShopPage(),
@@ -242,6 +243,8 @@ class _MainScreenState extends State<MainScreen> {
             _loadTotalPoints();
           }
         },
+        selectedItemColor: Colors.blue,
+        unselectedItemColor: Colors.grey,
         items: const [
           BottomNavigationBarItem(icon: Icon(Icons.home), label: 'Home'),
           BottomNavigationBarItem(icon: Icon(Icons.tag_faces), label: 'Relax'),

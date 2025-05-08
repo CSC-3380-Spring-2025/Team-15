@@ -4,7 +4,6 @@ import 'package:fortis/theme_change.dart';
 
 class ShopPage extends StatelessWidget {
   const ShopPage({super.key});
-
   // Constants for styling
   static const double headerFontSize = 20.0;
   static const double titleFontSize = 18.0;

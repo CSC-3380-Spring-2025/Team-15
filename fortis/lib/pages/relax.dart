@@ -8,8 +8,6 @@ import 'pop_up_pages/grounding_exercise.dart';
 import 'package:fortis/pages/my_journals_page.dart';
 import 'package:provider/provider.dart';
 import 'package:fortis/theme_change.dart';
-
-// Convert to StatefulWidget to properly handle state changes
 class RelaxPage extends StatefulWidget {
   const RelaxPage({super.key});
 
