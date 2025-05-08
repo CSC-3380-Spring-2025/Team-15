@@ -28,12 +28,25 @@ environment:
 # the latest version available on pub.dev. To see which dependencies have newer
 # versions available, run `flutter pub outdated`.
 dependencies:
+  provider: ^6.0.5
+  image_picker: ^1.0.4
+  audioplayers: ^5.2.0
   flutter:
     sdk: flutter
 
   # The following adds the Cupertino Icons font to your application.
   # Use with the CupertinoIcons class for iOS style icons.
+  
   cupertino_icons: ^1.0.8
+  table_calendar: ^3.2.0
+  firebase_core: ^3.12.1
+  firebase_auth: ^5.5.1
+  firebase_storage: 12.4.4
+  path: ^1.8.3
+  cloud_firestore: ^5.6.5
+  font_awesome_flutter: ^10.8.0
+  shared_preferences: ^2.5.3
+  
 
 dev_dependencies:
   flutter_test:
@@ -51,10 +64,19 @@ dev_dependencies:
 
 # The following section is specific to Flutter packages.
 flutter:
+  uses-material-design: true
+  assets:
+    - assets/avatars/
+    - assets/4-7-8-breathing.mp3
+    - assets/box-breathing.mp3
+    - assets/DEEP-BREATH.mp3
+    - assets/Body-Scan.mp3
+    - assets/mindful.mp3
+    - assets/ocean-waves.mp3
+    - assets/easteregg.mp3
   # The following line ensures that the Material Icons font is
   # included with your application, so that you can use the icons in
   # the material Icons class.
-  uses-material-design: true
 
   # To add assets to your application, add an assets section, like this:
   # assets:
