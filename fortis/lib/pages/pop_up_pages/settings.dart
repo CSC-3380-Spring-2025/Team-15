@@ -1,11 +1,13 @@
 import 'package:flutter/material.dart';
 import 'package:shared_preferences/shared_preferences.dart';
 
-/// Settings screen showing navigation shortcuts, audio controls, and dark mode toggle.
+/// Settings screen showing navigation shortcuts, audio controls, dark mode, notifications, and reset feature.
 ///
 /// - Persists user choices with `shared_preferences`.
-/// - Allows enabling/disabling sound effects and adjusting volume (0–100 %).
+/// - Allows enabling/disabling sound effects and adjusting volume (0–100 %).
 /// - Enables/disables dark mode.
+/// - Enables/disabling notifications.
+/// - Resets all settings to defaults.
 class SettingsPage extends StatefulWidget {
   const SettingsPage({super.key});
 
@@ -17,10 +19,12 @@ class _SettingsPageState extends State<SettingsPage> {
   static const _kSoundOnKey = 'soundOn';
   static const _kVolumeKey = 'volume';
   static const _kDarkModeKey = 'darkMode';
+  static const _kNotificationsKey = 'notifications';
 
   bool _soundOn = true;
   double _volume = 1.0; // 0.0 → muted, 1.0 → max
   bool _darkMode = false;
+  bool _notifications = true;
 
   @override
   void initState() {
@@ -34,6 +38,7 @@ class _SettingsPageState extends State<SettingsPage> {
       _soundOn = prefs.getBool(_kSoundOnKey) ?? true;
       _volume = prefs.getDouble(_kVolumeKey) ?? 1.0;
       _darkMode = prefs.getBool(_kDarkModeKey) ?? false;
+      _notifications = prefs.getBool(_kNotificationsKey) ?? true;
     });
   }
 
@@ -53,6 +58,29 @@ class _SettingsPageState extends State<SettingsPage> {
     final prefs = await SharedPreferences.getInstance();
     await prefs.setBool(_kDarkModeKey, value);
     setState(() => _darkMode = value);
+  }
+
+  Future<void> _toggleNotifications(bool value) async {
+    final prefs = await SharedPreferences.getInstance();
+    await prefs.setBool(_kNotificationsKey, value);
+    setState(() => _notifications = value);
+  }
+
+  Future<void> _resetSettings() async {
+    final prefs = await SharedPreferences.getInstance();
+    await prefs.remove(_kSoundOnKey);
+    await prefs.remove(_kVolumeKey);
+    await prefs.remove(_kDarkModeKey);
+    await prefs.remove(_kNotificationsKey);
+    setState(() {
+      _soundOn = true;
+      _volume = 1.0;
+      _darkMode = false;
+      _notifications = true;
+    });
+    ScaffoldMessenger.of(context).showSnackBar(
+      const SnackBar(content: Text('Settings reset to defaults')),
+    );
   }
 
   @override
@@ -110,6 +138,25 @@ class _SettingsPageState extends State<SettingsPage> {
             title: const Text('Dark Mode'),
             value: _darkMode,
             onChanged: _toggleDarkMode,
+          ),
+          const Divider(),
+
+          // ── Notifications section ──────────────────────────────────────────
+          const _SectionHeader('Notifications'),
+          SwitchListTile(
+            secondary: const Icon(Icons.notifications_outlined),
+            title: const Text('Notifications'),
+            value: _notifications,
+            onChanged: _toggleNotifications,
+          ),
+          const Divider(),
+
+          // ── Miscellaneous section ──────────────────────────────────────────
+          const _SectionHeader('Miscellaneous'),
+          ListTile(
+            leading: const Icon(Icons.refresh_outlined),
+            title: const Text('Reset Settings'),
+            onTap: _resetSettings,
           ),
         ],
       ),
