@@ -1,13 +1,7 @@
 import 'package:flutter/material.dart';
 import 'package:shared_preferences/shared_preferences.dart';
 
-/// Settings screen showing navigation shortcuts, audio controls, dark mode, notifications, and reset feature.
-///
-/// - Persists user choices with `shared_preferences`.
-/// - Allows enabling/disabling sound effects and adjusting volume (0–100 %).
-/// - Enables/disables dark mode.
-/// - Enables/disabling notifications.
-/// - Resets all settings to defaults.
+
 class SettingsPage extends StatefulWidget {
   const SettingsPage({super.key});
 
@@ -90,25 +84,24 @@ class _SettingsPageState extends State<SettingsPage> {
       body: ListView(
         padding: const EdgeInsets.symmetric(vertical: 8),
         children: [
-          // ── Navigation section ──────────────────────────────────────────────
+          // Navigation section
           const _SectionHeader('Navigation'),
           ListTile(
             leading: const Icon(Icons.home_outlined),
             title: const Text('Home'),
             onTap: () {
-              // TODO: Navigator.push(context, MaterialPageRoute(builder: (_) => const HomePage()));
+              
             },
           ),
           ListTile(
             leading: const Icon(Icons.storefront_outlined),
             title: const Text('Shop'),
             onTap: () {
-              // TODO: Navigator.push(context, MaterialPageRoute(builder: (_) => const ShopPage()));
             },
           ),
           const Divider(),
 
-          // ── Audio section ───────────────────────────────────────────────────
+          // Audio section 
           const _SectionHeader('Audio'),
           SwitchListTile(
             secondary: const Icon(Icons.volume_up_outlined),
@@ -131,7 +124,7 @@ class _SettingsPageState extends State<SettingsPage> {
           ),
           const Divider(),
 
-          // ── Appearance section ─────────────────────────────────────────────
+          // Appearance section
           const _SectionHeader('Appearance'),
           SwitchListTile(
             secondary: const Icon(Icons.dark_mode_outlined),
@@ -141,7 +134,7 @@ class _SettingsPageState extends State<SettingsPage> {
           ),
           const Divider(),
 
-          // ── Notifications section ──────────────────────────────────────────
+          // Notifications section
           const _SectionHeader('Notifications'),
           SwitchListTile(
             secondary: const Icon(Icons.notifications_outlined),
@@ -151,7 +144,7 @@ class _SettingsPageState extends State<SettingsPage> {
           ),
           const Divider(),
 
-          // ── Miscellaneous section ──────────────────────────────────────────
+          // Miscellaneous section
           const _SectionHeader('Miscellaneous'),
           ListTile(
             leading: const Icon(Icons.refresh_outlined),
@@ -164,8 +157,6 @@ class _SettingsPageState extends State<SettingsPage> {
   }
 }
 
-// ─────────────────────────────────────────────────────────────────────────────
-/// Simple grey section header used throughout the settings list.
 class _SectionHeader extends StatelessWidget {
   const _SectionHeader(this.label);
   final String label;

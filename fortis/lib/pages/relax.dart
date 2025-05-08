@@ -33,7 +33,6 @@ class _RelaxPageState extends State<RelaxPage> {
 
   void _refreshData() {
     // Find the parent MainScreen state and refresh points
-    // Note: You'll need to ensure your MainScreen widget exists and has the proper state
     final mainScreenState = context.findAncestorStateOfType<MainScreenState>();
     if (mainScreenState != null) {
       mainScreenState.loadTotalPoints();
