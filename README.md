@@ -20,22 +20,31 @@ A mobile application that transforms personal development into an engaging game.
 
 Kanban Board: [https://deformed234man.atlassian.net/jira/software/projects/MFLP/summary?atlOrigin=eyJpIjoiMDdkYjBjNGFkZDU2NDZhNTkzMDE4Yzc0ZDk0YzIzOTEiLCJwIjoiaiJ9]\
 Designs: [https://www.figma.com/design/MNf1g2YxivR126uPglBm6J/OOD?node-id=0-1&t=8A2eRpiqqIO9Z2vU-1]\
-Styles Guide(s): [link]
+Styles Guide(s): [https://dart.dev/effective-dart/style]
 
 # How to Run Dev and Test Environment
-Open the Fortis project in VS Code. Use an android emulator (we used the Flutter emulator through Android Studio). You made need to navigate in the terminal into the fortis directory. Launch the emulator, and run "flutter run" in the terminal to launch the app.
+Open the Fortis project in VS Code. Use an android emulator (we used the Flutter emulator through Android Studio) or a physical android device. Navigate to the fortis directory within the terminal. Launch the emulator and run the command "flutter run" in the terminal to start the app.
 
 ## Dependencies
   provider: ^6.0.5\
   image_picker: ^1.0.4\
   audioplayers: ^5.2.0\
+  cupertino_icons: ^1.0.8
+  table_calendar: ^3.2.0
+  firebase_core: ^3.12.1
+  firebase_auth: ^5.5.1
+  firebase_storage: 12.4.4
+  path: ^1.8.3
+  cloud_firestore: ^5.6.5
+  font_awesome_flutter: ^10.8.0
+  shared_preferences: ^2.5.3
   
   flutter:\
     sdk: flutter
 
 ### Downloading Dependencies
 
-Describe where to download the dependencies here. Some will likely require a web download. Provide links here. For IDE extensions, make sure your project works with the free version of them, and detail which IDE(s) these are available in.
+Install the flutter extension from the VS Code extensions marketplace. Nagivated to the fortis directory and run the command "flutter pub get" to download the dependencies. Install an android emulator, either Flutter emulator through Android Studio or connect a phsical android device.
 
 ## Commands
 
