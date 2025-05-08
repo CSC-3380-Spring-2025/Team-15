@@ -25,18 +25,22 @@ Styles Guide(s): [https://dart.dev/effective-dart/style]
 # How to Run Dev and Test Environment
 Open the Fortis project in VS Code. Use an android emulator (we used the Flutter emulator through Android Studio) or a physical android device. Navigate to the fortis directory within the terminal. Launch the emulator and run the command "flutter run" in the terminal to start the app.
 
+test login:\
+username: test@test.com\
+password: test123
+
 ## Dependencies
   provider: ^6.0.5\
   image_picker: ^1.0.4\
   audioplayers: ^5.2.0\
-  cupertino_icons: ^1.0.8
-  table_calendar: ^3.2.0
-  firebase_core: ^3.12.1
-  firebase_auth: ^5.5.1
-  firebase_storage: 12.4.4
-  path: ^1.8.3
-  cloud_firestore: ^5.6.5
-  font_awesome_flutter: ^10.8.0
+  cupertino_icons: ^1.0.8\
+  table_calendar: ^3.2.0\
+  firebase_core: ^3.12.1\
+  firebase_auth: ^5.5.1\
+  firebase_storage: 12.4.4\
+  path: ^1.8.3\
+  cloud_firestore: ^5.6.5\
+  font_awesome_flutter: ^10.8.0\
   shared_preferences: ^2.5.3
   
   flutter:\
