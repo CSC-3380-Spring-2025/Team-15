@@ -1,10 +1,11 @@
 import 'package:flutter/material.dart';
 import 'package:shared_preferences/shared_preferences.dart';
 
-/// Settings screen showing navigation shortcuts and audio controls.
+/// Settings screen showing navigation shortcuts, audio controls, and dark mode toggle.
 ///
 /// - Persists user choices with `shared_preferences`.
 /// - Allows enabling/disabling sound effects and adjusting volume (0–100 %).
+/// - Enables/disables dark mode.
 class SettingsPage extends StatefulWidget {
   const SettingsPage({super.key});
 
@@ -15,9 +16,11 @@ class SettingsPage extends StatefulWidget {
 class _SettingsPageState extends State<SettingsPage> {
   static const _kSoundOnKey = 'soundOn';
   static const _kVolumeKey = 'volume';
+  static const _kDarkModeKey = 'darkMode';
 
   bool _soundOn = true;
   double _volume = 1.0; // 0.0 → muted, 1.0 → max
+  bool _darkMode = false;
 
   @override
   void initState() {
@@ -30,6 +33,7 @@ class _SettingsPageState extends State<SettingsPage> {
     setState(() {
       _soundOn = prefs.getBool(_kSoundOnKey) ?? true;
       _volume = prefs.getDouble(_kVolumeKey) ?? 1.0;
+      _darkMode = prefs.getBool(_kDarkModeKey) ?? false;
     });
   }
 
@@ -43,6 +47,12 @@ class _SettingsPageState extends State<SettingsPage> {
     final prefs = await SharedPreferences.getInstance();
     await prefs.setDouble(_kVolumeKey, value);
     setState(() => _volume = value);
+  }
+
+  Future<void> _toggleDarkMode(bool value) async {
+    final prefs = await SharedPreferences.getInstance();
+    await prefs.setBool(_kDarkModeKey, value);
+    setState(() => _darkMode = value);
   }
 
   @override
@@ -86,10 +96,20 @@ class _SettingsPageState extends State<SettingsPage> {
               min: 0,
               max: 1,
               divisions: 10,
-              label: '${(_volume * 100).round()}%',
+              label: '\${(_volume * 100).round()}%',
               onChanged: _soundOn ? _changeVolume : null,
             ),
-            trailing: Text('${(_volume * 100).round()}%'),
+            trailing: Text('\${(_volume * 100).round()}%'),
+          ),
+          const Divider(),
+
+          // ── Appearance section ─────────────────────────────────────────────
+          const _SectionHeader('Appearance'),
+          SwitchListTile(
+            secondary: const Icon(Icons.dark_mode_outlined),
+            title: const Text('Dark Mode'),
+            value: _darkMode,
+            onChanged: _toggleDarkMode,
           ),
         ],
       ),
