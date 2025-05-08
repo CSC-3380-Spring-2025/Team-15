@@ -1,161 +1,214 @@
 import 'package:flutter/material.dart';
 import 'package:provider/provider.dart';
 import 'package:fortis/theme_change.dart';
-import 'package:shared_preferences/shared_preferences.dart';
 
-class PointsModel with ChangeNotifier {
-  static const _key = 'coins';
-  int _coins = 0;
-  int get coins => _coins;
-
-  PointsModel() {
-    _load();
-  }
-
-  Future<void> _load() async {
-    final prefs = await SharedPreferences.getInstance();
-    _coins = prefs.getInt(_key) ?? 0;
-    notifyListeners();
-  }
-
-  Future<void> _save() async {
-    final prefs = await SharedPreferences.getInstance();
-    await prefs.setInt(_key, _coins);
-  }
-
-  Future<void> add(int amount) async {
-    _coins += amount;
-    await _save();
-    notifyListeners();
-  }
-
-  Future<bool> spend(int amount) async {
-    if (_coins < amount) return false;
-    _coins -= amount;
-    await _save();
-    notifyListeners();
-    return true;
-  }
-
-  /* Convenience getter */
-  static PointsModel of(BuildContext ctx, {bool listen = false}) =>
-      Provider.of<PointsModel>(ctx, listen: listen);
-}
-
-/*─────────────────────────────────────────────────────────────
-  SHOP PAGE
-─────────────────────────────────────────────────────────────*/
 class ShopPage extends StatelessWidget {
   const ShopPage({super.key});
+
+  // Constants for styling
+  static const double headerFontSize = 20.0;
+  static const double titleFontSize = 18.0;
+  static const double itemSpacing = 15.0;
+  static const double themeItemHeight = 100.0;
+  static const double iconSize = 50.0;
+  static const EdgeInsets defaultPadding = EdgeInsets.all(15.0);
+  static const BorderRadius cardBorderRadius = BorderRadius.all(
+    Radius.circular(15),
+  );
 
   @override
   Widget build(BuildContext context) {
     final bgColor = context.watch<ThemeChanger>().backgroundColor;
+
     return Scaffold(
       backgroundColor: bgColor,
       appBar: AppBar(
-        title: const Text('Shop',
-            style: TextStyle(fontSize: 30, fontWeight: FontWeight.bold)),
+        title: const Text(
+          'Shop',
+          style: TextStyle(fontSize: 30, fontWeight: FontWeight.bold),
+        ),
         actions: [
-          Consumer<PointsModel>(
-            builder: (_, points, __) => Row(
-              children: [
-                const Icon(Icons.monetization_on, color: Colors.amber),
-                const SizedBox(width: 4),
-                Text('${points.coins}',
-                    style: const TextStyle(
-                        fontSize: 18, fontWeight: FontWeight.bold)),
-                const SizedBox(width: 12),
-              ],
-            ),
-          ),
-        ],
-      ),
-      body: ListView(
-        padding: const EdgeInsets.all(15.0),
-        children: [
-          _header('Featured'),
-          _itemLong(context, 'Featured Pack', 'Awesome stuff', 50),
-          _header('Themes'),
           Row(
             children: [
-              Expanded(child: _itemTheme('theme name', 'PRICE coins', Colors.blue, context)),
+              const Icon(
+                Icons.monetization_on,
+                color: Colors.amber,
+                semanticLabel: 'Coins',
+              ),
+              const SizedBox(width: 5),
+              const Text('# Coins', style: TextStyle(fontSize: 18)),
               const SizedBox(width: 15),
-              Expanded(child: _itemTheme('theme name', 'PRICE coins', Colors.pinkAccent, context)),
+              const Icon(
+                Icons.notifications,
+                color: Colors.grey,
+                semanticLabel: 'Notifications',
+              ),
+              const SizedBox(width: 15),
             ],
           ),
-          _header('Premium Audio'),
-          _itemLong(context, 'Rain Sounds', 'Relaxing ambience', 20),
-          _itemLong(context, 'Lo-fi Beats', 'Study music', 25),
-          _itemLong(context, 'White Noise', 'Sleep helper', 15),
         ],
       ),
-      floatingActionButton: FloatingActionButton.extended(
-        onPressed: () => PointsModel.of(context).add(10), // demo grant +10
-        label: const Text('+10 demo coins'),
-        icon: const Icon(Icons.add),
+
+      body: ListView(
+        padding: defaultPadding,
+        children: [
+          _buildHeaderTitle('Featured'),
+          _buildLongItem(
+            context,
+            'Featured item',
+            'This is a featured item description',
+            '100 coins',
+          ),
+          _buildHeaderTitle('Themes'),
+          const SizedBox(height: itemSpacing),
+          _buildThemeRow(context),
+
+          _buildHeaderTitle('Premium Audio'),
+          _buildLongItem(
+            context,
+            'Premium Audio 1',
+            'High quality audio track',
+            '200 coins',
+          ),
+          _buildLongItem(
+            context,
+            'Premium Audio 2',
+            'Exclusive sound effect',
+            '250 coins',
+          ),
+          _buildLongItem(
+            context,
+            'Premium Audio 3',
+            'Limited edition music',
+            '300 coins',
+          ),
+        ],
       ),
     );
   }
 
-  /*────────── helper widgets ──────────*/
-  Widget _header(String text) => Padding(
-        padding: const EdgeInsets.symmetric(vertical: 10),
-        child: Text(text,
-            style: const TextStyle(fontSize: 20, fontWeight: FontWeight.bold)),
-      );
-
-  Widget _itemLong(
-      BuildContext context, String title, String desc, int price) {
-    return Card(
-      color: Colors.grey[300],
-      elevation: 3,
-      shape: RoundedRectangleBorder(borderRadius: BorderRadius.circular(15)),
-      child: ListTile(
-        leading: const Icon(Icons.shopping_bag, size: 50),
-        title: Text(title,
-            style: const TextStyle(fontWeight: FontWeight.bold, fontSize: 18)),
-        subtitle: Text(desc),
-        trailing: Consumer<PointsModel>(
-          builder: (_, points, __) => Column(
-            mainAxisAlignment: MainAxisAlignment.center,
-            children: [
-              Text('$price coins',
-                  style: const TextStyle(color: Colors.blue)),
-              const SizedBox(height: 4),
-              ElevatedButton(
-                onPressed:
-                    points.coins >= price ? () => points.spend(price) : null,
-                child: const Text('Buy'),
-              ),
-            ],
-          ),
+  Widget _buildHeaderTitle(String title) {
+    return Padding(
+      padding: const EdgeInsets.symmetric(vertical: 10.0),
+      child: Text(
+        title,
+        style: const TextStyle(
+          fontSize: headerFontSize,
+          fontWeight: FontWeight.bold,
         ),
       ),
     );
   }
 
-  Widget _itemTheme(String title, String price, Color color, BuildContext context) {
+  Widget _buildLongItem(
+    BuildContext context,
+    String title,
+    String description,
+    String price,
+  ) {
     return Card(
       color: Colors.grey[300],
       elevation: 3,
-      shape: RoundedRectangleBorder(borderRadius: BorderRadius.circular(15)),
+      shape: RoundedRectangleBorder(borderRadius: cardBorderRadius),
+      margin: const EdgeInsets.only(bottom: itemSpacing),
+      child: ListTile(
+        contentPadding: defaultPadding,
+        leading: const Icon(
+          Icons.music_note,
+          size: iconSize,
+          color: Colors.green,
+          semanticLabel: 'Item icon',
+        ),
+        title: Text(
+          title,
+          style: const TextStyle(
+            fontSize: titleFontSize,
+            fontWeight: FontWeight.bold,
+          ),
+        ),
+        subtitle: Text(description),
+        trailing: Column(
+          mainAxisAlignment: MainAxisAlignment.center,
+          children: [
+            Text(
+              price,
+              style: const TextStyle(
+                color: Colors.blue,
+                fontWeight: FontWeight.bold,
+              ),
+            ),
+            const SizedBox(height: 4),
+            SizedBox(
+              height: 30,
+              child: ElevatedButton(
+                onPressed: () => _handlePurchase(context, title, price),
+                style: ElevatedButton.styleFrom(
+                  padding: const EdgeInsets.symmetric(
+                    horizontal: 10,
+                    vertical: 5,
+                  ),
+                ),
+                child: const Text('Buy'),
+              ),
+            ),
+          ],
+        ),
+      ),
+    );
+  }
+
+  Widget _buildThemeRow(BuildContext context) {
+    return Row(
+      children: [
+        Expanded(
+          child: _buildThemeItem(
+            'Blue Theme',
+            '150 coins',
+            Colors.blue,
+            context,
+          ),
+        ),
+        const SizedBox(width: itemSpacing),
+        Expanded(
+          child: _buildThemeItem(
+            'Pink Theme',
+            '150 coins',
+            Colors.pinkAccent,
+            context,
+          ),
+        ),
+      ],
+    );
+  }
+
+  Widget _buildThemeItem(
+    String title,
+    String price,
+    Color color,
+    BuildContext context,
+  ) {
+    return Card(
+      elevation: 3,
+      color: Colors.grey[300],
+      shape: RoundedRectangleBorder(borderRadius: cardBorderRadius),
       child: Column(
         children: [
-          Container(height: 100, color: color),
+          Container(height: themeItemHeight, color: color),
           Padding(
-            padding: const EdgeInsets.all(8),
+            padding: const EdgeInsets.all(8.0),
             child: Column(
               children: [
-                Text(title,
-                    style: const TextStyle(
-                        fontSize: 18, fontWeight: FontWeight.bold)),
+                Text(
+                  title,
+                  style: const TextStyle(
+                    fontSize: titleFontSize,
+                    fontWeight: FontWeight.bold,
+                  ),
+                ),
                 const SizedBox(height: 4),
                 Text(price, style: const TextStyle(color: Colors.blue)),
                 ElevatedButton(
-                  onPressed: () {
-                    context.read<ThemeChanger>().setColor(color);
-                  }, // Add purchase mechanic 
+                  onPressed: () => _handleThemeChange(context, color),
                   child: const Text('Buy'),
                 ),
               ],
@@ -165,16 +218,24 @@ class ShopPage extends StatelessWidget {
       ),
     );
   }
-}
-class ShopApp extends StatelessWidget {
-  const ShopApp({super.key});
 
-  @override
-  Widget build(BuildContext context) {
-    return ChangeNotifierProvider(
-      create: (_) => PointsModel(),
-      child: const MaterialApp(home: ShopPage()),
-    );
+  void _handlePurchase(BuildContext context, String itemName, String price) {
+    // Implement purchase logic
+    ScaffoldMessenger.of(
+      context,
+    ).showSnackBar(SnackBar(content: Text('Purchased $itemName for $price')));
+  }
+
+  void _handleThemeChange(BuildContext context, Color color) {
+    try {
+      context.read<ThemeChanger>().setColor(color);
+      ScaffoldMessenger.of(context).showSnackBar(
+        const SnackBar(content: Text('Theme changed successfully')),
+      );
+    } catch (e) {
+      ScaffoldMessenger.of(
+        context,
+      ).showSnackBar(const SnackBar(content: Text('Failed to change theme')));
+    }
   }
 }
-
