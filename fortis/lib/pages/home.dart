@@ -1,46 +1,47 @@
 import 'package:flutter/material.dart';
 import 'package:table_calendar/table_calendar.dart';
+import 'package:provider/provider.dart';
+import 'package:fortis/theme_change.dart';
 
-class HomePage extends StatefulWidget {
-  const HomePage({super.key});
+class HomePage extends StatelessWidget {
+  final DateTime today;
+  final List<Map<String, dynamic>> challenges;
+  final int points;
+  final void Function(int index) onToggle;
+  final void Function(DateTime selectedDay) onDaySelected;
+  final Map<DateTime, bool> completedDays;
+  final int streak;
 
-  @override
-  State<HomePage> createState() => _HomePageState();
-}
-
-class _HomePageState extends State<HomePage> {
-  DateTime today = DateTime.now();
-  final List<Map<String, dynamic>> todayChallenges = [
-    {"name": "🧘 Meditate", "completed": false, "points": 10},
-    {"name": "✍ Journal", "completed": false, "points": 10},
-    {"name": "🤔 Reflect", "completed": false, "points": 10},
-    {"name": "💪 Physical Exercise", "completed": false, "points": 10},
-  ];
-
-  int get points => todayChallenges
-      .where((c) => c["completed"])
-      .fold<int>(0, (sum, c) => sum + (c["points"] as int));
-
-  void _onDaySelected(DateTime selectedDay, DateTime focusedDay) {
-    setState(() {
-      today = selectedDay;
-    });
-  }
-
-  void _toggleChallenge(int index) {
-    setState(() {
-      todayChallenges[index]["completed"] =
-          !todayChallenges[index]["completed"];
-    });
-  }
+  const HomePage({
+    super.key,
+    required this.today,
+    required this.challenges,
+    required this.points,
+    required this.onToggle,
+    required this.onDaySelected,
+    required this.completedDays,
+    required this.streak,
+  });
 
   @override
   Widget build(BuildContext context) {
+    final bool isToday = isSameDay(today, DateTime.now());
+
     return Scaffold(
+      backgroundColor: context.watch<ThemeChanger>().backgroundColor,
       appBar: AppBar(title: const Text('Welcome!'), centerTitle: true),
       body: Column(
         children: [
           const SizedBox(height: 20),
+          Text(
+            "🔥 Current Streak: $streak Day${streak == 1 ? '' : 's'}",
+            style: const TextStyle(
+              fontSize: 22,
+              fontWeight: FontWeight.bold,
+              color: Colors.orange,
+            ),
+          ),
+          const SizedBox(height: 10),
           Text(
             "Selected Date: ${today.toLocal()}".split(' ')[0],
             style: const TextStyle(fontSize: 18, fontWeight: FontWeight.bold),
@@ -52,7 +53,102 @@ class _HomePageState extends State<HomePage> {
             firstDay: DateTime.utc(2010, 1, 1),
             lastDay: DateTime.utc(2030, 12, 31),
             selectedDayPredicate: (day) => isSameDay(today, day),
-            onDaySelected: _onDaySelected,
+            onDaySelected: (selectedDay, focusedDay) => onDaySelected(selectedDay),
+            calendarBuilders: CalendarBuilders(
+              defaultBuilder: (context, day, focusedDay) {
+                final normalizedDay = DateTime(day.year, day.month, day.day);
+                final isCompleted = completedDays[normalizedDay] ?? false;
+
+                if (isCompleted) {
+                  return Container(
+                    margin: const EdgeInsets.all(6.0),
+                    alignment: Alignment.center,
+                    decoration: BoxDecoration(
+                      color: Colors.green,
+                      shape: BoxShape.circle,
+                    ),
+                    child: Text(
+                      '${day.day}',
+                      style: const TextStyle(
+                        color: Colors.white,
+                        fontWeight: FontWeight.bold,
+                      ),
+                    ),
+                  );
+                }
+                return null;
+              },
+              todayBuilder: (context, day, focusedDay) {
+                final normalizedDay = DateTime(day.year, day.month, day.day);
+                final isCompleted = completedDays[normalizedDay] ?? false;
+
+                if (isCompleted) {
+                  return Container(
+                    margin: const EdgeInsets.all(6.0),
+                    alignment: Alignment.center,
+                    decoration: BoxDecoration(
+                      color: Colors.green,
+                      shape: BoxShape.circle,
+                    ),
+                    child: Text(
+                      '${day.day}',
+                      style: const TextStyle(
+                        color: Colors.white,
+                        fontWeight: FontWeight.bold,
+                      ),
+                    ),
+                  );
+                }
+
+                return Container(
+                  margin: const EdgeInsets.all(6.0),
+                  alignment: Alignment.center,
+                  decoration: BoxDecoration(
+                    color: Colors.blueAccent,
+                    shape: BoxShape.circle,
+                  ),
+                  child: Text(
+                    '${day.day}',
+                    style: const TextStyle(color: Colors.white),
+                  ),
+                );
+              },
+              selectedBuilder: (context, day, focusedDay) {
+                final normalizedDay = DateTime(day.year, day.month, day.day);
+                final isCompleted = completedDays[normalizedDay] ?? false;
+
+                if (isCompleted) {
+                  return Container(
+                    margin: const EdgeInsets.all(6.0),
+                    alignment: Alignment.center,
+                    decoration: BoxDecoration(
+                      color: Colors.green.shade700,
+                      shape: BoxShape.circle,
+                    ),
+                    child: Text(
+                      '${day.day}',
+                      style: const TextStyle(
+                        color: Colors.white,
+                        fontWeight: FontWeight.bold,
+                      ),
+                    ),
+                  );
+                }
+
+                return Container(
+                  margin: const EdgeInsets.all(6.0),
+                  alignment: Alignment.center,
+                  decoration: BoxDecoration(
+                    color: Colors.orangeAccent,
+                    shape: BoxShape.circle,
+                  ),
+                  child: Text(
+                    '${day.day}',
+                    style: const TextStyle(color: Colors.white),
+                  ),
+                );
+              },
+            ),
           ),
           const SizedBox(height: 20),
           Text(
@@ -71,14 +167,11 @@ class _HomePageState extends State<HomePage> {
           const SizedBox(height: 10),
           Expanded(
             child: ListView.builder(
-              itemCount: todayChallenges.length,
+              itemCount: challenges.length,
               itemBuilder: (context, index) {
-                var challenge = todayChallenges[index];
+                var challenge = challenges[index];
                 return Card(
-                  margin: const EdgeInsets.symmetric(
-                    horizontal: 16,
-                    vertical: 8,
-                  ),
+                  margin: const EdgeInsets.symmetric(horizontal: 16, vertical: 8),
                   shape: RoundedRectangleBorder(
                     borderRadius: BorderRadius.circular(12),
                   ),
@@ -87,21 +180,30 @@ class _HomePageState extends State<HomePage> {
                       challenge["completed"]
                           ? Icons.check_circle
                           : Icons.circle_outlined,
-                      color:
-                          challenge["completed"] ? Colors.green : Colors.grey,
+                      color: challenge["completed"] ? Colors.green : Colors.grey,
                     ),
                     title: Text(
                       "${challenge["name"]} (+${challenge["points"]} pts)",
                       style: TextStyle(
                         fontSize: 18,
                         fontWeight: FontWeight.bold,
-                        color:
-                            challenge["completed"]
-                                ? Colors.green
-                                : Colors.black,
+                        color: challenge["completed"]
+                            ? Colors.green
+                            : (isToday ? Colors.black : Colors.grey),
                       ),
                     ),
-                    onTap: () => _toggleChallenge(index),
+                    onTap: () {
+                      if (isToday) {
+                        onToggle(index);
+                      } else {
+                        ScaffoldMessenger.of(context).showSnackBar(
+                          const SnackBar(
+                            content: Text("You can only complete today's challenges!"),
+                            duration: Duration(seconds: 2),
+                          ),
+                        );
+                      }
+                    },
                   ),
                 );
               },
