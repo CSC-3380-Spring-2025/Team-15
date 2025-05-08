@@ -1,7 +1,11 @@
+// Create this file at: lib/pages/my_journals_page.dart
+// This file exports the MyJournalsPage class from your original code
+
 import 'package:flutter/material.dart';
 import 'package:cloud_firestore/cloud_firestore.dart';
 import 'package:firebase_auth/firebase_auth.dart';
 
+// Export the JournalEntry class so it can be used in other files
 class JournalEntry {
   final String id;
   final String title;

@@ -17,7 +17,6 @@ class _GroundingExercisePageState extends State<GroundingExercisePage> {
   int? _finalRating;
   double _sliderValue = 5.0;
 
-  
   final List<String> _questions = [
     'How many windows are in the room?',
     'How many electrical outlets do you see?',
@@ -32,12 +31,17 @@ class _GroundingExercisePageState extends State<GroundingExercisePage> {
     'What color do you associate with calm? Can you see it here?',
     'Observe three different colors around you and name them.',
     'Describe the temperature of the room in one word.',
+    'What is one object you can see that is blue?',
+    'Can you touch something with a rough texture? Describe it.',
+    'Hear the silence—what do you notice when you listen closely?',
+    'Find a spot of natural light—what does it look like?',
+    'Locate a scent that reminds you of a happy memory.',
   ];
 
   @override
   void initState() {
     super.initState();
-  
+
     final rand = Random();
     final questions = List<String>.from(_questions)..shuffle(rand);
     final selected = questions.take(5).toList();
@@ -62,9 +66,11 @@ class _GroundingExercisePageState extends State<GroundingExercisePage> {
 
     if (isRatingStep) {
       final rating = _sliderValue.round();
-      if (_stepIndex == 0) {_initialRating = rating;
+      if (_stepIndex == 0) {
+        _initialRating = rating;
+      } else {
+        _finalRating = rating;
       }
-      else{ _finalRating = rating; }
     }
 
     if (_stepIndex == _prompts.length - 1) {
@@ -79,60 +85,57 @@ class _GroundingExercisePageState extends State<GroundingExercisePage> {
     });
   }
 
-void _handleCompletion() {
-  if (_finalRating != null &&
-      _initialRating != null &&
-      _finalRating! > _initialRating!) {
-   
-    showDialog(
-      context: context,
-      builder: (ctx) => AlertDialog(
-        title: const Text('Feeling Worse?'),
-        content: const Text(
-          'Your anxiety rating is higher now than at the start.\n'
-          'Would you like to go through the exercise again?',
+  void _handleCompletion() {
+    if (_finalRating != null &&
+        _initialRating != null &&
+        _finalRating! > _initialRating!) {
+      showDialog(
+        context: context,
+        builder: (ctx) => AlertDialog(
+          title: const Text('Feeling Worse?'),
+          content: const Text(
+            'Your anxiety rating is higher now than at the start.\n'
+            'Would you like to go through the exercise again?',
+          ),
+          actions: [
+            TextButton(
+              onPressed: () {
+                Navigator.of(ctx).pop();
+                _restart();
+              },
+              child: const Text('Retry'),
+            ),
+            TextButton(
+              onPressed: () {
+                Navigator.of(ctx).pop();
+                Navigator.of(context).pop();
+              },
+              child: const Text('Done'),
+            ),
+          ],
         ),
-        actions: [
-          TextButton(
-            onPressed: () {
-              Navigator.of(ctx).pop();
-              _restart();
-            },
-            child: const Text('Retry'),
-          ),
-          TextButton(
-            onPressed: () {
-              Navigator.of(ctx).pop();
-              Navigator.of(context).pop(); 
-            },
-            child: const Text('Done'),
-          ),
-        ],
-      ),
-    );
-  } else {
-   
-    showDialog(
-      context: context,
-      builder: (ctx) => AlertDialog(
-        title: const Text('Well Done'),
-        content: const Text('You have completed the grounding exercise.'),
-        actions: [
-          TextButton(
-            onPressed: () {
-              Navigator.of(ctx).pop(); 
-              Navigator.of(context).pushReplacement(
-                MaterialPageRoute(builder: (_) => const RelaxPage()),
-              );
-            },
-            child: const Text('OK'),
-          ),
-        ],
-      ),
-    );
+      );
+    } else {
+      showDialog(
+        context: context,
+        builder: (ctx) => AlertDialog(
+          title: const Text('Well Done'),
+          content: const Text('You have completed the grounding exercise.'),
+          actions: [
+            TextButton(
+              onPressed: () {
+                Navigator.of(ctx).pop();
+                Navigator.of(context).pushReplacement(
+                  MaterialPageRoute(builder: (_) => const RelaxPage()),
+                );
+              },
+              child: const Text('OK'),
+            ),
+          ],
+        ),
+      );
+    }
   }
-}
-
 
   void _restart() {
     setState(() {
@@ -141,7 +144,7 @@ void _handleCompletion() {
       _finalRating = null;
       _answerController.clear();
       _sliderValue = 5.0;
-     
+
       final rand = Random();
       final questions = List<String>.from(_questions)..shuffle(rand);
       final selected = questions.take(5).toList();

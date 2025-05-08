@@ -9,6 +9,8 @@ import 'package:fortis/pages/pop_up_pages/profile_details.dart';
 import 'package:firebase_auth/firebase_auth.dart';
 import 'package:cloud_firestore/cloud_firestore.dart';
 import 'package:fortis/pages/user_login.dart';
+import 'package:provider/provider.dart';
+import 'package:fortis/theme_change.dart';
 
 class ProfilePage extends StatefulWidget {
   const ProfilePage({super.key});
@@ -26,6 +28,11 @@ class _ProfilePageState extends State<ProfilePage> {
   User? _currentUser;
   int _selectedAvatarIndex = 0;
   bool _isLoading = false;
+
+  // Achievement fields
+  int _daysSignedIn = 0;
+  int _challengesCompleted = 0;
+  DateTime? _accountCreationDate;
 
   final List<String> _avatarOptions = [
     'assets/avatars/avatar_1.png',
@@ -48,70 +55,51 @@ class _ProfilePageState extends State<ProfilePage> {
 
   Future<void> _loadUserProfile() async {
     if (_currentUser == null) return;
-
-    setState(() {
-      _isLoading = true;
-    });
-
+    setState(() => _isLoading = true);
     try {
-      // gets the profile data from Firestore
-      DocumentSnapshot userDoc =
+      final userDoc =
           await _firestore.collection('users').doc(_currentUser!.uid).get();
-
       if (userDoc.exists) {
-        Map<String, dynamic> userData = userDoc.data() as Map<String, dynamic>;
-        if (userData.containsKey('avatarIndex')) {
-          setState(() {
-            _selectedAvatarIndex = userData['avatarIndex'];
-          });
-        }
-        if (userData.containsKey('firstName')) {
-          setState(() {
-            firstName = userData['firstName'];
-          });
-        }
-        if (userData.containsKey('lastName')) {
-          setState(() {
-            lastName = userData['lastName'];
-          });
+        final userData = userDoc.data() as Map<String, dynamic>;
+        _selectedAvatarIndex = userData['avatarIndex'] ?? _selectedAvatarIndex;
+        firstName = userData['firstName'] ?? firstName;
+        lastName = userData['lastName'] ?? lastName;
+        _daysSignedIn = userData['daysSignedIn'] ?? _daysSignedIn;
+
+        _challengesCompleted =
+            userData['challengesCompleted'] ?? _challengesCompleted;
+        if (userData['createdAt'] != null) {
+          _accountCreationDate = (userData['createdAt'] as Timestamp).toDate();
         }
       }
     } catch (e) {
-      print('Error loading user profile: $e');
+      debugPrint('Error loading user profile: $e');
     } finally {
-      setState(() {
-        _isLoading = false;
-      });
+      setState(() => _isLoading = false);
     }
   }
 
   Future<void> _updateAvatar(int index) async {
     if (_currentUser == null) return;
-
     setState(() {
       _isLoading = true;
       _selectedAvatarIndex = index;
     });
-
     try {
-      // it updates the user's profile in Firestore
       await _firestore.collection('users').doc(_currentUser!.uid).set({
         'avatarIndex': index,
         'updatedAt': FieldValue.serverTimestamp(),
       }, SetOptions(merge: true));
-
       ScaffoldMessenger.of(context).showSnackBar(
         const SnackBar(content: Text('Avatar updated successfully')),
       );
     } catch (e) {
-      print('Error updating avatar: $e');
-      ScaffoldMessenger.of(context).showSnackBar(
-        SnackBar(content: Text('Failed to update avatar: ${e.toString()}')),
-      );
+      debugPrint('Error updating avatar: $e');
+      ScaffoldMessenger.of(
+        context,
+      ).showSnackBar(SnackBar(content: Text('Failed to update avatar: $e')));
     } finally {
-      setState(() {
-        _isLoading = false;
-      });
+      setState(() => _isLoading = false);
     }
   }
 
@@ -119,7 +107,7 @@ class _ProfilePageState extends State<ProfilePage> {
     showDialog(
       context: context,
       builder:
-          (context) => AlertDialog(
+          (_) => AlertDialog(
             title: const Text('Select Avatar'),
             content: SizedBox(
               width: double.maxFinite,
@@ -131,26 +119,24 @@ class _ProfilePageState extends State<ProfilePage> {
                   crossAxisSpacing: 10,
                 ),
                 itemCount: _avatarOptions.length,
-                itemBuilder: (context, index) {
-                  return InkWell(
-                    onTap: () {
-                      Navigator.of(context).pop();
-                      _updateAvatar(index);
-                    },
-                    child: CircleAvatar(
-                      backgroundImage: AssetImage(_avatarOptions[index]),
-                      radius: 30,
-                      child:
-                          _selectedAvatarIndex == index
-                              ? const Icon(
-                                Icons.check_circle,
-                                color: Colors.green,
-                                size: 24,
-                              )
-                              : null,
+                itemBuilder:
+                    (context, index) => InkWell(
+                      onTap: () {
+                        Navigator.of(context).pop();
+                        _updateAvatar(index);
+                      },
+                      child: CircleAvatar(
+                        radius: 30,
+                        backgroundImage: AssetImage(_avatarOptions[index]),
+                        child:
+                            _selectedAvatarIndex == index
+                                ? const Icon(
+                                  Icons.check_circle,
+                                  color: Colors.green,
+                                )
+                                : null,
+                      ),
                     ),
-                  );
-                },
               ),
             ),
             actions: [
@@ -165,7 +151,9 @@ class _ProfilePageState extends State<ProfilePage> {
 
   @override
   Widget build(BuildContext context) {
+    final bgColor = context.watch<ThemeChanger>().backgroundColor;
     return Scaffold(
+      backgroundColor: bgColor,
       appBar: AppBar(title: const Text('Profile'), centerTitle: true),
       body:
           _isLoading
@@ -173,45 +161,23 @@ class _ProfilePageState extends State<ProfilePage> {
               : SingleChildScrollView(
                 padding: const EdgeInsets.symmetric(vertical: 16),
                 child: Column(
+                  crossAxisAlignment: CrossAxisAlignment.stretch,
                   children: [
-                    // Profile section
-                    Container(
+                    // Profile header
+                    Padding(
                       padding: const EdgeInsets.all(16),
                       child: Column(
                         children: [
-                          const SizedBox(height: 20),
-                          // Profile image
                           GestureDetector(
                             onTap: _showAvatarSelectionDialog,
-                            child: Stack(
-                              children: [
-                                CircleAvatar(
-                                  radius: 50,
-                                  backgroundImage: AssetImage(
-                                    _avatarOptions[_selectedAvatarIndex],
-                                  ),
-                                ),
-                                Positioned(
-                                  bottom: 0,
-                                  right: 0,
-                                  child: Container(
-                                    padding: const EdgeInsets.all(4),
-                                    decoration: BoxDecoration(
-                                      color: Colors.blue,
-                                      borderRadius: BorderRadius.circular(20),
-                                    ),
-                                    child: const Icon(
-                                      Icons.edit,
-                                      color: Colors.white,
-                                      size: 20,
-                                    ),
-                                  ),
-                                ),
-                              ],
+                            child: CircleAvatar(
+                              radius: 50,
+                              backgroundImage: AssetImage(
+                                _avatarOptions[_selectedAvatarIndex],
+                              ),
                             ),
                           ),
-                          const SizedBox(height: 16),
-                          // User name
+                          const SizedBox(height: 12),
                           Text(
                             firstName != null && lastName != null
                                 ? '$firstName $lastName'
@@ -221,119 +187,159 @@ class _ProfilePageState extends State<ProfilePage> {
                               fontWeight: FontWeight.bold,
                             ),
                           ),
-                          const SizedBox(height: 8),
-                          // Email display
+                          const SizedBox(height: 4),
                           Text(
                             _currentUser?.email ?? '',
-                            style: const TextStyle(
-                              fontSize: 16,
-                              color: Colors.grey,
-                            ),
+                            style: const TextStyle(color: Colors.grey),
                           ),
-                          const SizedBox(height: 20),
-                          // Change avatar button
+                          const SizedBox(height: 12),
                           ElevatedButton(
                             onPressed: _showAvatarSelectionDialog,
                             child: const Text('Change Avatar'),
                           ),
-                          const SizedBox(height: 20),
                         ],
                       ),
                     ),
-                    // Divider
-                    const Divider(thickness: 1),
-                    // Menu items
+                    const Divider(),
+
+                    // Achievements in a row
+                    Padding(
+                      padding: const EdgeInsets.symmetric(
+                        horizontal: 16,
+                        vertical: 8,
+                      ),
+                      child: Column(
+                        crossAxisAlignment: CrossAxisAlignment.start,
+                        children: [
+                          const Text(
+                            'Achievements',
+                            style: TextStyle(
+                              fontSize: 16,
+                              fontWeight: FontWeight.w600,
+                            ),
+                          ),
+                          const SizedBox(height: 8),
+                          Row(
+                            mainAxisAlignment: MainAxisAlignment.spaceAround,
+                            children: [
+                              _buildAchievementItem(
+                                icon: Icons.cake,
+                                label: 'Joined',
+                                value:
+                                    _accountCreationDate != null
+                                        ? '${_accountCreationDate!.toLocal()}'
+                                            .split(' ')[0]
+                                        : 'N/A',
+                              ),
+                              _buildAchievementItem(
+                                icon: Icons.calendar_today,
+                                label: 'Days Signed In',
+                                value: '$_daysSignedIn',
+                              ),
+                              _buildAchievementItem(
+                                icon: Icons.check_circle_outline,
+                                label: 'Challenges',
+                                value: '$_challengesCompleted',
+                              ),
+                            ],
+                          ),
+                        ],
+                      ),
+                    ),
+                    const Divider(),
+
+                    //Menu Itmes-------
                     _buildMenuItem(
                       icon: Icons.book_outlined,
                       title: 'My Journals',
-                      onTap: () {
-                        Navigator.push(
-                          context,
-                          MaterialPageRoute(
-                            builder: (context) => const MyJournalsPage(),
+                      onTap:
+                          () => Navigator.push(
+                            context,
+                            MaterialPageRoute(
+                              builder: (_) => const MyJournalsPage(),
+                            ),
                           ),
-                        );
-                      },
                     ),
                     _buildMenuItem(
                       icon: Icons.person_outline,
                       title: 'Profile',
-                      onTap: () {
-                        Navigator.push(
-                          context,
-                          MaterialPageRoute(
-                            builder: (context) => const ProfileDetailsPage(),
+                      onTap:
+                          () => Navigator.push(
+                            context,
+                            MaterialPageRoute(
+                              builder: (_) => const ProfileDetailsPage(),
+                            ),
                           ),
-                        );
-                      },
                     ),
                     _buildMenuItem(
                       icon: Icons.settings_outlined,
                       title: 'Settings',
-                      onTap: () {
-                        Navigator.push(
-                          context,
-                          MaterialPageRoute(
-                            builder: (context) => const SettingsPage(),
+                      onTap:
+                          () => Navigator.push(
+                            context,
+                            MaterialPageRoute(
+                              builder: (_) => const SettingsPage(),
+                            ),
                           ),
-                        );
-                      },
                     ),
                     _buildMenuItem(
                       icon: Icons.notifications_outlined,
                       title: 'Notification',
-                      onTap: () {
-                        Navigator.push(
-                          context,
-                          MaterialPageRoute(
-                            builder: (context) => const NotificationsPage(),
+                      onTap:
+                          () => Navigator.push(
+                            context,
+                            MaterialPageRoute(
+                              builder: (_) => const NotificationsPage(),
+                            ),
                           ),
-                        );
-                      },
                     ),
                     _buildMenuItem(
                       icon: Icons.help_outline,
                       title: 'Help Center',
-                      onTap: () {
-                        Navigator.push(
-                          context,
-                          MaterialPageRoute(
-                            builder: (context) => const HelpCenterPage(),
+                      onTap:
+                          () => Navigator.push(
+                            context,
+                            MaterialPageRoute(
+                              builder: (_) => const HelpCenterPage(),
+                            ),
                           ),
-                        );
-                      },
                     ),
-                    const Divider(height: 32, thickness: 1),
+                    const Divider(),
                     _buildMenuItem(
                       icon: Icons.logout_outlined,
                       title: 'Logout',
-                      onTap: () async {
-                        try {
-                          await FirebaseAuth.instance.signOut();
-                          Navigator.of(context).pushAndRemoveUntil(
-                            MaterialPageRoute(
-                              builder: (context) => const LoginPage(),
-                            ),
-                            (route) => false,
-                          );
-                        } catch (e) {
-                          print('Error signing out: $e');
-                          ScaffoldMessenger.of(context).showSnackBar(
-                            SnackBar(
-                              content: Text(
-                                'Error signing out: ${e.toString()}',
-                              ),
-                            ),
-                          );
-                        }
-                      },
                       textColor: Colors.red,
+                      onTap: () async {
+                        await _auth.signOut();
+                        Navigator.of(context).pushAndRemoveUntil(
+                          MaterialPageRoute(builder: (_) => const LoginPage()),
+                          (route) => false,
+                        );
+                      },
                     ),
-                    // Add a little padding at the bottom to prevent overflow
                     const SizedBox(height: 16),
                   ],
                 ),
               ),
+    );
+  }
+
+  Widget _buildAchievementItem({
+    required IconData icon,
+    required String label,
+    required String value,
+  }) {
+    return Column(
+      children: [
+        Icon(icon, size: 28, color: Colors.blue),
+        const SizedBox(height: 4),
+        Text(
+          value,
+          style: const TextStyle(fontSize: 14, fontWeight: FontWeight.bold),
+        ),
+        const SizedBox(height: 2),
+        Text(label, style: const TextStyle(fontSize: 12, color: Colors.grey)),
+      ],
     );
   }
 
@@ -345,7 +351,7 @@ class _ProfilePageState extends State<ProfilePage> {
   }) {
     return ListTile(
       leading: Icon(icon),
-      title: Text(title, style: TextStyle(fontSize: 16, color: textColor)),
+      title: Text(title, style: TextStyle(color: textColor)),
       trailing: const Icon(Icons.chevron_right),
       onTap: onTap,
     );
